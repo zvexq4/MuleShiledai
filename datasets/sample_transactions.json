@@ -1,0 +1,90 @@
+[
+  {
+    "transaction_id": "TX001",
+    "account_id": "ACC001",
+    "amount": 450,
+    "type": "incoming",
+    "sender_id": "USER_A",
+    "receiver_id": "ACC001",
+    "timestamp": "2026-07-06T10:15:00",
+    "device_id": "DEVICE_1",
+    "location": "Istanbul"
+  },
+  {
+    "transaction_id": "TX002",
+    "account_id": "ACC001",
+    "amount": 430,
+    "type": "outgoing",
+    "sender_id": "ACC001",
+    "receiver_id": "USER_B",
+    "timestamp": "2026-07-06T10:25:00",
+    "device_id": "DEVICE_1",
+    "location": "Istanbul"
+  },
+  {
+    "transaction_id": "TX003",
+    "account_id": "ACC_RISKY",
+    "amount": 1200,
+    "type": "incoming",
+    "sender_id": "USER_1",
+    "receiver_id": "ACC_RISKY",
+    "timestamp": "2026-07-06T22:01:00",
+    "device_id": "NEW_DEVICE",
+    "location": "Ankara"
+  },
+  {
+    "transaction_id": "TX004",
+    "account_id": "ACC_RISKY",
+    "amount": 1500,
+    "type": "incoming",
+    "sender_id": "USER_2",
+    "receiver_id": "ACC_RISKY",
+    "timestamp": "2026-07-06T22:03:00",
+    "device_id": "NEW_DEVICE",
+    "location": "Ankara"
+  },
+  {
+    "transaction_id": "TX005",
+    "account_id": "ACC_RISKY",
+    "amount": 1800,
+    "type": "incoming",
+    "sender_id": "USER_3",
+    "receiver_id": "ACC_RISKY",
+    "timestamp": "2026-07-06T22:05:00",
+    "device_id": "NEW_DEVICE",
+    "location": "Ankara"
+  },
+  {
+    "transaction_id": "TX006",
+    "account_id": "ACC_RISKY",
+    "amount": 900,
+    "type": "incoming",
+    "sender_id": "USER_4",
+    "receiver_id": "ACC_RISKY",
+    "timestamp": "2026-07-06T22:07:00",
+    "device_id": "NEW_DEVICE",
+    "location": "Ankara"
+  },
+  {
+    "transaction_id": "TX007",
+    "account_id": "ACC_RISKY",
+    "amount": 1700,
+    "type": "incoming",
+    "sender_id": "USER_5",
+    "receiver_id": "ACC_RISKY",
+    "timestamp": "2026-07-06T22:09:00",
+    "device_id": "NEW_DEVICE",
+    "location": "Ankara"
+  },
+  {
+    "transaction_id": "TX008",
+    "account_id": "ACC_RISKY",
+    "amount": 6900,
+    "type": "outgoing",
+    "sender_id": "ACC_RISKY",
+    "receiver_id": "UNKNOWN_ACCOUNT",
+    "timestamp": "2026-07-06T22:15:00",
+    "device_id": "NEW_DEVICE",
+    "location": "Ankara"
+  }
+]

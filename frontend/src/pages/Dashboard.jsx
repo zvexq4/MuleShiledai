@@ -122,7 +122,6 @@ function Dashboard({
             <table className="monitor-table">
               <thead>
                 <tr>
-                  <th className="col-check"><input type="checkbox" disabled /></th>
                   <th>TARGET ACCOUNT</th>
                   <th
                     className="sortable"
@@ -143,9 +142,6 @@ function Dashboard({
                       className={isSelected ? "row-selected" : ""}
                       onClick={() => loadAccount(account)}
                     >
-                      <td className="col-check">
-                        <input type="checkbox" checked={isSelected} readOnly />
-                      </td>
                       <td className="col-account">
                         <span className="account-id">{account.account_id}</span>
                         <span className="account-name">{account.name}</span>
@@ -177,7 +173,7 @@ function Dashboard({
 
                 {filteredAccounts.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="empty-row">
+                    <td colSpan={3} className="empty-row">
                       No accounts match this filter.
                     </td>
                   </tr>

@@ -1,4 +1,4 @@
-import { Search, Bell, User } from "lucide-react";
+import { Bell, User } from "lucide-react";
 
 const PAGE_LABELS = {
   dashboard: "Mule Account Monitor",
@@ -21,16 +21,6 @@ function Header({ activePage, searchValue, onSearchChange }) {
       </div>
 
       <div className="topbar-actions">
-        <div className="topbar-search">
-          <Search size={14} />
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchValue || ""}
-            onChange={(e) => onSearchChange && onSearchChange(e.target.value)}
-          />
-        </div>
-
         <button className="icon-btn" title="Notifications">
           <Bell size={17} />
         </button>

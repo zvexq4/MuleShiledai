@@ -1,4 +1,12 @@
-import { LayoutGrid, Users, Bell, FileText, BarChart2, Sliders, LogOut } from "lucide-react";
+import {
+  LayoutGrid,
+  Users,
+  Bell,
+  FileText,
+  BarChart2,
+  Sliders,
+  Mail,
+} from "lucide-react";
 
 const NAV_ITEMS = [
   { key: "dashboard", label: "Monitor", icon: LayoutGrid },
@@ -30,8 +38,14 @@ function Sidebar({ activePage, setActivePage }) {
         </nav>
       </div>
 
-      <button className="icon-nav-btn icon-nav-exit" title="Log out">
-        <LogOut size={19} />
+      <button
+        className={`icon-nav-btn icon-nav-exit ${activePage === "contact" ? "active" : ""
+          }`}
+        title="Contact"
+        onClick={() => setActivePage("contact")}
+      >
+        <Mail size={19} />
+        <span>Contact</span>
       </button>
     </aside>
   );

@@ -75,14 +75,14 @@ function Analytics({ dashboard, accounts }) {
     <main className="analytics-page">
       <section className="analytics-kpis">
         <div className="kpi-card">
-          <h4>Highest Risk</h4>
-          <h2>{highestRisk}</h2>
+          <h4>Highest Risk Score</h4>
+          <h2>{highestRisk}<small>/100</small></h2>
           <span>/100</span>
         </div>
 
         <div className="kpi-card">
-          <h4>Average Risk</h4>
-          <h2>{averageRisk}</h2>
+          <h4>Average Risk Score</h4>
+          <h2>{averageRisk}<small>/100</small></h2>
           <span>/100</span>
         </div>
 
@@ -100,14 +100,18 @@ function Analytics({ dashboard, accounts }) {
       </section>
 
       <section className="panel analytics-wide">
-        <h2>📊 Risk Intelligence Dashboard</h2>
-        <p className="empty">
-          AI-generated overview of current fraud indicators.
-        </p>
+
+        <div className="page-title">
+          <h1>Analytics Center</h1>
+
+          <p>
+            AI-powered fraud analytics and network intelligence overview.
+          </p>
+        </div>
       </section>
 
       <section className="panel">
-        <h2>Risk Distribution</h2>
+        <h2>Risk Distribution by Accounts</h2>
 
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
@@ -129,7 +133,7 @@ function Analytics({ dashboard, accounts }) {
       </section>
 
       <section className="panel">
-        <h2>Average Risk by City</h2>
+        <h2>Regional Risk Analysis</h2>
 
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={cityRisk}>
@@ -160,8 +164,8 @@ function Analytics({ dashboard, accounts }) {
                     account.risk_score >= 70
                       ? "#ef4444"
                       : account.risk_score >= 30
-                      ? "#f59e0b"
-                      : "#22c55e",
+                        ? "#f59e0b"
+                        : "#22c55e",
                   fontWeight: "bold",
                 }}
               >
@@ -175,35 +179,38 @@ function Analytics({ dashboard, accounts }) {
       <section className="panel">
         <h2>🤖 AI Insights</h2>
 
-        <div className="insight-list">
-          <p>
-            ✓ {dashboard.critical_accounts} critical mule account currently
-            detected.
-          </p>
+        <div className="insight-grid">
 
-          <p>
-            ✓ Average platform risk score is {averageRisk}/100.
-          </p>
+          <div className="insight-card">
+            <strong>Critical Accounts</strong>
+            <p>{dashboard.critical_accounts} accounts require immediate review.</p>
+          </div>
 
-          <p>
-            ✓ Highest risk account:{" "}
-            <strong>{highestRiskAccount?.name}</strong>.
-          </p>
+          <div className="insight-card">
+            <strong>Average Risk</strong>
+            <p>{averageRisk}/100 across all monitored accounts.</p>
+          </div>
 
-          <p>
-            ✓ Highest risk city:{" "}
-            <strong>{highestRiskCity?.city}</strong>.
-          </p>
+          <div className="insight-card">
+            <strong>Highest Risk Account</strong>
+            <p>{highestRiskAccount?.name}</p>
+          </div>
 
-          <p>
-            ✓ Primary fraud pattern: Rapid transfer combined with new device
-            activity.
-          </p>
+          <div className="insight-card">
+            <strong>Highest Risk City</strong>
+            <p>{highestRiskCity?.city}</p>
+          </div>
 
-          <p>
-            ✓ AI recommendation: Immediate manual investigation for critical
-            accounts.
-          </p>
+          <div className="insight-card">
+            <strong>Fraud Pattern</strong>
+            <p>Rapid transfer + new device activity detected.</p>
+          </div>
+
+          <div className="insight-card">
+            <strong>AI Recommendation</strong>
+            <p>Immediate manual investigation is recommended.</p>
+          </div>
+
         </div>
       </section>
     </main>

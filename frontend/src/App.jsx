@@ -9,6 +9,7 @@ import Alerts from "./pages/Alerts";
 import Report from "./pages/Report";
 import Simulator from "./pages/Simulator";
 import Analytics from "./pages/Analytics";
+import Contact from "./pages/Contact";
 import SplashScreen from "./components/SplashScreen";
 import Toast from "./components/Toast";
 
@@ -203,6 +204,10 @@ function App() {
             addSimulationTransaction={addSimulationTransaction}
             resetSimulation={resetSimulation}
           />
+        )}
+
+        {activePage === "contact" && (
+          <Contact />
         )}
       </div>
     </div>

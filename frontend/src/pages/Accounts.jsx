@@ -17,8 +17,43 @@ function Accounts({ accounts, loadAccount, setActivePage, getRiskColor }) {
   return (
     <main className="accounts-page">
       <section className="panel accounts-header">
-        <h2>👥 Customer Accounts</h2>
-        <p className="empty">Search and monitor customer risk profiles.</p>
+
+        <div className="page-title">
+          <h1>Accounts</h1>
+          <p>
+            Monitor customer accounts and investigate suspicious activity.
+          </p>
+        </div>
+
+        <div className="account-stats">
+
+          <div className="stat-box">
+            <span>Total Accounts</span>
+            <strong>{accounts.length}</strong>
+          </div>
+
+          <div className="stat-box">
+            <span>Critical</span>
+            <strong>
+              {accounts.filter(a => a.risk_level === "critical").length}
+            </strong>
+          </div>
+
+          <div className="stat-box">
+            <span>Suspicious</span>
+            <strong>
+              {accounts.filter(a => a.risk_level === "suspicious").length}
+            </strong>
+          </div>
+
+          <div className="stat-box">
+            <span>Safe</span>
+            <strong>
+              {accounts.filter(a => a.risk_level === "safe").length}
+            </strong>
+          </div>
+
+        </div>
 
         <div className="accounts-toolbar">
           <input

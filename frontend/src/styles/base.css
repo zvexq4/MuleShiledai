@@ -1,0 +1,77 @@
+/* ===== RESET ===== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== BODY ===== */
+
+body {
+  background: #0f172a;
+  color: #e5e7eb;
+  font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ===== HEADINGS ===== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 700;
+}
+
+/* ===== LINKS ===== */
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ===== BUTTON ===== */
+
+button {
+  font-family: inherit;
+  transition: all .25s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+/* ===== INPUT ===== */
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  outline: none;
+}
+
+/* ===== TABLE ===== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 15px;
+  border-bottom: 1px solid #334155;
+  text-align: left;
+}
+
+th {
+  color: #94a3b8;
+}
+
+tbody tr:hover {
+  background: #334155;
+  cursor: pointer;
+}

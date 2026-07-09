@@ -1,0 +1,70 @@
+/* ===== SIMULATOR ===== */
+
+.simulator-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ===== FORM ===== */
+
+.simulator-panel label {
+  display: block;
+  color: #94a3b8;
+  margin: 14px 0 6px;
+}
+
+.simulator-panel input,
+.simulator-panel select {
+  width: 100%;
+  background: #0f172a;
+  color: #e5e7eb;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.simulator-panel button {
+  width: 100%;
+  margin-top: 18px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.reset-button {
+  background: #dc2626 !important;
+}
+
+.reset-button:hover {
+  background: #b91c1c !important;
+}
+
+/* ===== GUIDE ===== */
+
+.simulator-guide h3 {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.guide-steps {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.guide-steps div {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.guide-steps p {
+  color: #94a3b8;
+  margin-top: 6px;
+}

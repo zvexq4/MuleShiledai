@@ -1,0 +1,7 @@
+[
+  { "account_id": "ACC001", "name": "Ahmet Yilmaz", "city": "Istanbul", "age": 32 },
+  { "account_id": "ACC002", "name": "Ayse Demir", "city": "Izmir", "age": 28 },
+  { "account_id": "ACC003", "name": "Mehmet Kaya", "city": "Bursa", "age": 41 },
+  { "account_id": "ACC004", "name": "Elif Sahin", "city": "Ankara", "age": 26 },
+  { "account_id": "ACC005", "name": "Can Arslan", "city": "Ankara", "age": 35 }
+]

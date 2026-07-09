@@ -1,0 +1,128 @@
+/* ===== ACCOUNTS PAGE ===== */
+
+.accounts-page {
+  display: grid;
+  gap: 24px;
+}
+
+.accounts-header {
+  max-width: 100%;
+}
+
+/* ===== TOOLBAR ===== */
+
+.accounts-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.accounts-toolbar select {
+  background: #0f172a;
+  color: #e5e7eb;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 14px;
+  outline: none;
+}
+
+/* ===== SEARCH ===== */
+
+.report-search {
+  width: 100%;
+  box-sizing: border-box;
+  background: #0f172a;
+  color: #e5e7eb;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 14px;
+  outline: none;
+}
+
+/* ===== GRID ===== */
+
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+/* ===== CARD ===== */
+
+.account-card {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  transition: .25s;
+}
+
+.account-card:hover {
+  transform: translateY(-4px);
+  border-color: #3b82f6;
+}
+
+.polished-card {
+  min-height: 230px;
+}
+
+/* ===== HEADER ===== */
+
+.account-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.account-card h3 {
+  margin: 0;
+}
+
+.account-card p {
+  margin: 0;
+  color: #94a3b8;
+}
+
+/* ===== RISK ===== */
+
+.account-risk-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ===== META ===== */
+
+.account-meta {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.account-meta span {
+  background: #1e293b;
+  color: #94a3b8;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+/* ===== BUTTON ===== */
+
+.account-card button {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.account-card button:hover {
+  background: #1d4ed8;
+}

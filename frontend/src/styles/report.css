@@ -1,0 +1,122 @@
+/* ===== REPORT ===== */
+
+.report-page {
+  display: grid;
+  gap: 24px;
+}
+
+/* ===== ACCOUNT LIST ===== */
+
+.report-account-list {
+  display: grid;
+  gap: 12px;
+}
+
+.report-account-item {
+  width: 100%;
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e5e7eb;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: .25s;
+}
+
+.report-account-item:hover {
+  border-color: #3b82f6;
+}
+
+.report-account-item p {
+  margin-top: 6px;
+  color: #94a3b8;
+}
+
+/* ===== BUTTON ===== */
+
+.back-button {
+  background: #334155;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+/* ===== SUMMARY ===== */
+
+.report-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 18px;
+}
+
+.summary-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 18px;
+  padding: 20px;
+  text-align: center;
+}
+
+.summary-card p {
+  color: #94a3b8;
+}
+
+.summary-card h3 {
+  margin: 10px 0;
+  font-size: 24px;
+}
+
+.summary-card span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+/* ===== TIMELINE ===== */
+
+.timeline {
+  display: grid;
+  gap: 18px;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 14px;
+}
+
+.timeline-dot {
+  width: 14px;
+  height: 14px;
+  background: #3b82f6;
+  border-radius: 50%;
+  margin-top: 6px;
+  box-shadow: 0 0 0 4px rgba(59,130,246,.15);
+}
+
+.timeline-content {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+}
+
+.timeline-content p,
+.timeline-content small {
+  color: #94a3b8;
+}
+
+.timeline-content span {
+  font-weight: bold;
+}
+
+.timeline-content em {
+  color: #f59e0b;
+  font-style: normal;
+}

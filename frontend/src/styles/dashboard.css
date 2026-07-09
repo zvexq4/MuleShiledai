@@ -1,0 +1,87 @@
+/* ===== DASHBOARD ===== */
+
+.dashboard-layout {
+  display: block;
+}
+
+.dashboard-hero {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border: 1px solid #334155;
+  border-radius: 22px;
+  padding: 26px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-hero h2 {
+  font-size: 32px;
+}
+
+.dashboard-hero p {
+  color: #94a3b8;
+  margin-top: 8px;
+}
+
+.engine-card {
+  background: #020617;
+  border: 1px solid #334155;
+  border-radius: 18px;
+  padding: 18px 24px;
+  display: grid;
+  gap: 6px;
+  text-align: right;
+}
+
+.engine-card span,
+.engine-card small {
+  color: #94a3b8;
+}
+
+.engine-card strong {
+  color: #22c55e;
+  font-size: 22px;
+}
+
+.dashboard-insights {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* ===== STAT CARDS ===== */
+
+.stat-card {
+  background: #1e293b;
+  border-radius: 18px;
+  padding: 22px;
+  border-left: 5px solid #64748b;
+  text-align: center;
+}
+
+.stat-card p {
+  color: #94a3b8;
+}
+
+.stat-card h2 {
+  margin-top: 12px;
+  font-size: 34px;
+}
+
+.danger {
+  border-left-color: #ef4444;
+}
+
+.warning {
+  border-left-color: #f59e0b;
+}
+
+.success {
+  border-left-color: #22c55e;
+}
+
+.online {
+  color: #22c55e;
+}

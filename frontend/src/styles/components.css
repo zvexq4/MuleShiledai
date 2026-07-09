@@ -1,0 +1,257 @@
+/* ===== BADGES ===== */
+
+.badge {
+  color: white;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ===== EMPTY TEXT ===== */
+
+.empty {
+  color: #94a3b8;
+}
+
+/* ===== PROGRESS ===== */
+
+.progress {
+  height: 12px;
+  background: #334155;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+}
+
+/* ===== ANATOMY BAR ===== */
+
+.anatomy-bar {
+  width: 170px;
+  height: 10px;
+  background: #334155;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.anatomy-bar.full {
+  width: 100%;
+}
+
+.anatomy-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+/* ===== SCORE ===== */
+
+.score-box {
+  background: #0f172a;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.score-box p {
+  color: #94a3b8;
+}
+
+.score-box h1 {
+  margin: 8px 0 16px;
+  font-size: 48px;
+}
+
+/* ===== USER ===== */
+
+.account-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+
+.user-meta {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.user-meta span {
+  background: #0f172a;
+  color: #94a3b8;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+/* ===== BREAKDOWN ===== */
+
+.breakdown {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.breakdown div {
+  display: flex;
+  justify-content: space-between;
+  background: #0f172a;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+/* ===== AI ===== */
+
+.ai-box {
+  background: #0f172a;
+  border-radius: 14px;
+  padding: 18px;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+/* ===== TRANSACTIONS ===== */
+
+.transaction-list {
+  display: grid;
+  gap: 10px;
+}
+
+.transaction-item {
+  background: #0f172a;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+}
+
+.transaction-item p {
+  margin-top: 4px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+
+.transaction-item button {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.incoming {
+  color: #22c55e;
+  font-weight: bold;
+}
+
+.outgoing {
+  color: #ef4444;
+  font-weight: bold;
+}
+
+/* ===== LOGO ===== */
+
+.brand-logo {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.logo-mark {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  box-shadow: 0 0 24px rgba(59, 130, 246, .25);
+}
+
+.brand-logo strong {
+  font-size: 13px;
+}
+
+.brand-logo span {
+  font-size: 10px;
+  color: #64748b;
+}
+.splash-screen {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #1e293b, #020617);
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 18px;
+  text-align: center;
+}
+
+.splash-screen h1 {
+  font-size: 42px;
+}
+
+.splash-screen p,
+.splash-screen span {
+  color: #94a3b8;
+}
+
+.splash-loader {
+  width: 260px;
+  height: 10px;
+  background: #1e293b;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid #334155;
+}
+
+.splash-loader div {
+  height: 100%;
+  width: 70%;
+  background: linear-gradient(90deg, #3b82f6, #22c55e);
+  border-radius: 999px;
+  animation: loadingMove 1.4s infinite;
+}
+
+@keyframes loadingMove {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(160%);
+  }
+}
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: #064e3b;
+  color: #dcfce7;
+  border: 1px solid #22c55e;
+  padding: 14px 18px;
+  border-radius: 14px;
+  z-index: 9999;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+  animation: toastIn 0.3s ease;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

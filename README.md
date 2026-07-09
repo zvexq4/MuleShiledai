@@ -1,4 +1,3 @@
-
 # 🛡 MuleShield AI
 
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
@@ -18,7 +17,6 @@
 *This project was created for the Fintech Hackathon by Hamza Çiftçi and Çağıl.*
 
 ---
-
 # Description
 
 MuleShield AI is an AI-powered fraud intelligence platform designed to detect potential mule accounts through behavioral transaction analysis.

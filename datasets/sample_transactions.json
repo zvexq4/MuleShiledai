@@ -328,16 +328,5 @@
     "timestamp": "2026-07-08T19:02:37",
     "device_id": "NEW_DEVICE",
     "location": "Ankara"
-  },
-  {
-    "transaction_id": "TX031",
-    "account_id": "ACC003",
-    "amount": 3460,
-    "type": "incoming",
-    "sender_id": "UNKNOWN_USER_1",
-    "receiver_id": "ACC003",
-    "timestamp": "2026-07-09T03:22:07",
-    "device_id": "NEW_DEVICE",
-    "location": "Ankara"
   }
 ]

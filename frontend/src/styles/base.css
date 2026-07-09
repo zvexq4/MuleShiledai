@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap');
+
 /* ===== RESET ===== */
 
 * {
@@ -9,9 +11,9 @@
 /* ===== BODY ===== */
 
 body {
-  background: #0f172a;
-  color: #e5e7eb;
-  font-family: Arial, Helvetica, sans-serif;
+  background: #040814;
+  color: #E7ECF3;
+  font-family: 'Inter', sans-serif;
   overflow-x: hidden;
 }
 
@@ -24,6 +26,7 @@ h4,
 h5,
 h6 {
   font-weight: 700;
+  color: #F8FAFC;
 }
 
 /* ===== LINKS ===== */
@@ -37,11 +40,8 @@ a {
 
 button {
   font-family: inherit;
-  transition: all .25s ease;
-}
-
-button:hover {
-  transform: translateY(-2px);
+  transition: all .2s ease;
+  cursor: pointer;
 }
 
 /* ===== INPUT ===== */
@@ -53,7 +53,7 @@ textarea {
   outline: none;
 }
 
-/* ===== TABLE ===== */
+/* ===== TABLE (generic fallback for other pages) ===== */
 
 table {
   width: 100%;
@@ -63,15 +63,10 @@ table {
 th,
 td {
   padding: 15px;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid #1E293B;
   text-align: left;
 }
 
 th {
-  color: #94a3b8;
-}
-
-tbody tr:hover {
-  background: #334155;
-  cursor: pointer;
+  color: #94A3B8;
 }

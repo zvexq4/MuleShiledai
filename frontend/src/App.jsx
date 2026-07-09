@@ -24,6 +24,7 @@ function App() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState("");
+  const [searchValue, setSearchValue] = useState("");
 
   const [simAccount, setSimAccount] = useState("ACC001");
   const [simAmount, setSimAmount] = useState(2500);
@@ -47,18 +48,18 @@ function App() {
   };
 
   useEffect(() => {
-  const initialize = async () => {
-    try {
-      await refreshData();
-    } finally {
-      setTimeout(() => {
-        setLoading(false);
-      }, 1500);
-    }
-  };
+    const initialize = async () => {
+      try {
+        await refreshData();
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1500);
+      }
+    };
 
-  initialize();
-}, []);
+    initialize();
+  }, []);
 
   const loadAccount = async (account) => {
     const risk = await axios.get(`${API_URL}/risk/${account.account_id}`);
@@ -101,32 +102,32 @@ function App() {
     setActivePage("report");
     setToast("Transaction added. AI report generated.");
 
-setTimeout(() => {
-  setToast("");
-}, 3000);
+    setTimeout(() => {
+      setToast("");
+    }, 3000);
   };
 
   const resetSimulation = async () => {
-  await axios.post(`${API_URL}/simulation/reset`);
+    await axios.post(`${API_URL}/simulation/reset`);
 
-  const updatedAccounts = await refreshData();
+    const updatedAccounts = await refreshData();
 
-  clearSelectedAccount();
+    clearSelectedAccount();
 
-  if (updatedAccounts.length > 0) {
-    setSimAccount(updatedAccounts[0].account_id);
-  }
+    if (updatedAccounts.length > 0) {
+      setSimAccount(updatedAccounts[0].account_id);
+    }
 
-  setToast("Demo dataset reset successfully.");
+    setToast("Demo dataset reset successfully.");
 
-  setTimeout(() => {
-    setToast("");
-  }, 3000);
-};
+    setTimeout(() => {
+      setToast("");
+    }, 3000);
+  };
 
   if (loading) {
-  return <SplashScreen />;
-}
+    return <SplashScreen />;
+  }
 
   return (
     <div className="shell">
@@ -134,7 +135,11 @@ setTimeout(() => {
       <Sidebar activePage={activePage} setActivePage={setActivePage} />
 
       <div className="app">
-        <Header />
+        <Header
+          activePage={activePage}
+          searchValue={searchValue}
+          onSearchChange={setSearchValue}
+        />
 
         {activePage === "dashboard" && (
           <Dashboard
@@ -143,6 +148,10 @@ setTimeout(() => {
             loadAccount={loadAccount}
             getRiskColor={getRiskColor}
             setActivePage={setActivePage}
+            searchValue={searchValue}
+            selectedUser={selectedUser}
+            riskDetail={riskDetail}
+            explanation={explanation}
           />
         )}
 

@@ -1,32 +1,37 @@
-import Logo from "./Logo";
+import { LayoutGrid, Users, Bell, FileText, BarChart2, Sliders, LogOut } from "lucide-react";
+
+const NAV_ITEMS = [
+  { key: "dashboard", label: "Monitor", icon: LayoutGrid },
+  { key: "accounts", label: "Accounts", icon: Users },
+  { key: "alerts", label: "Alerts", icon: Bell },
+  { key: "report", label: "Reports", icon: FileText },
+  { key: "analytics", label: "Analytics", icon: BarChart2 },
+  { key: "simulator", label: "Settings", icon: Sliders },
+];
 
 function Sidebar({ activePage, setActivePage }) {
   return (
-    <aside className="sidebar">
-      <Logo />
+    <aside className="icon-sidebar">
+      <div className="icon-sidebar-top">
+        <div className="icon-logo">M</div>
 
-      <button className={activePage === "dashboard" ? "active" : ""} onClick={() => setActivePage("dashboard")}>
-        Dashboard
-      </button>
+        <nav className="icon-nav">
+          {NAV_ITEMS.map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              className={`icon-nav-btn ${activePage === key ? "active" : ""}`}
+              onClick={() => setActivePage(key)}
+              title={label}
+            >
+              <Icon size={19} />
+              <span>{label}</span>
+            </button>
+          ))}
+        </nav>
+      </div>
 
-      <button className={activePage === "accounts" ? "active" : ""} onClick={() => setActivePage("accounts")}>
-        Accounts
-      </button>
-
-	  <button className={activePage === "analytics" ? "active" : ""} onClick={() => setActivePage("analytics")}>
-  		Analytics
-	  </button>
-
-      <button className={activePage === "report" ? "active" : ""} onClick={() => setActivePage("report")}>
-        Report
-      </button>
-
-      <button className={activePage === "alerts" ? "active" : ""} onClick={() => setActivePage("alerts")}>
-        Alerts
-      </button>
-
-      <button className={activePage === "simulator" ? "active" : ""} onClick={() => setActivePage("simulator")}>
-        Simulator
+      <button className="icon-nav-btn icon-nav-exit" title="Log out">
+        <LogOut size={19} />
       </button>
     </aside>
   );

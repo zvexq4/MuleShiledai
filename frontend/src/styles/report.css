@@ -50,7 +50,7 @@
 
 .report-summary-grid {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 18px;
 }
 
@@ -95,7 +95,7 @@
   background: #3b82f6;
   border-radius: 50%;
   margin-top: 6px;
-  box-shadow: 0 0 0 4px rgba(59,130,246,.15);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, .15);
 }
 
 .timeline-content {
@@ -119,4 +119,34 @@
 .timeline-content em {
   color: #f59e0b;
   font-style: normal;
+}
+
+.download-report-btn {
+
+  width: 100%;
+
+  margin-top: 20px;
+
+  background: #00c8ff;
+
+  color: #07111d;
+
+  border: none;
+
+  border-radius: 12px;
+
+  padding: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: .25s;
+}
+
+.download-report-btn:hover {
+
+  background: #16d4ff;
+
+  transform: translateY(-2px);
 }

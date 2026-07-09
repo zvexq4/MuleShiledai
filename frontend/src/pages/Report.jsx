@@ -2,6 +2,7 @@ import { useState } from "react";
 import DetailPanel from "../components/DetailPanel";
 import TransactionList from "../components/TransactionList";
 import RiskTimeline from "../components/RiskTimeline";
+import InvestigationPanel from "../components/InvestigationPanel";
 
 function Report({
   accounts,
@@ -134,8 +135,19 @@ function Report({
 
           <section className="panel">
             <h2>Transaction History</h2>
-            <TransactionList transactions={transactions} />
+            <InvestigationPanel
+              selectedUser={selectedUser}
+              riskDetail={riskDetail}
+              explanation={explanation}
+              transactions={transactions}
+            />
           </section>
+          <InvestigationPanel
+            selectedUser={selectedUser}
+            riskDetail={riskDetail}
+            explanation={explanation}
+            transactions={transactions}
+          />
         </>
       )}
     </main>

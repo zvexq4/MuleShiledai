@@ -3,6 +3,7 @@ import DetailPanel from "../components/DetailPanel";
 import TransactionList from "../components/TransactionList";
 import RiskTimeline from "../components/RiskTimeline";
 import InvestigationPanel from "../components/InvestigationPanel";
+import generateInvestigationPDF from "../utils/generateInvestigationPDF";
 
 function Report({
   accounts,
@@ -32,42 +33,23 @@ function Report({
 
   return (
     <main className="report-page">
-      <section className="panel report-header">
-        <h2>📄 Fraud Investigation Report</h2>
-        <p className="empty">Search a customer and generate a full risk report.</p>
+      {!selectedUser && (
+        <section className="panel report-header">
+          <h2>Select Account</h2>
 
-        <input
-          className="report-search"
-          placeholder="Search by name, account ID or city..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </section>
+          <input
+            className="report-search"
+            placeholder="Search by name, account ID or city..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </section>
+      )}
 
       {!selectedUser && (
         <section className="panel">
-          <h2>Select Account</h2>
-
           <div className="report-account-list">
-            {filteredAccounts.map((account) => (
-              <button
-                className="report-account-item"
-                key={account.account_id}
-                onClick={() => loadAccount(account)}
-              >
-                <div>
-                  <strong>{account.name}</strong>
-                  <p>{account.account_id} • {account.city}</p>
-                </div>
-
-                <span
-                  className="badge"
-                  style={{ backgroundColor: getRiskColor(account.risk_level) }}
-                >
-                  {account.risk_level.toUpperCase()}
-                </span>
-              </button>
-            ))}
+            ...
           </div>
         </section>
       )}
@@ -131,7 +113,31 @@ function Report({
             />
           </div>
 
-          <RiskTimeline transactions={transactions} />
+          <section className="panel">
+
+            <div className="timeline-header">
+
+              <h2>⚠ Risk Timeline</h2>
+
+              <button
+                className="download-report-btn"
+                onClick={() =>
+                  generateInvestigationPDF(
+                    selectedUser,
+                    riskDetail,
+                    explanation,
+                    transactions
+                  )
+                }
+              >
+                📄 Download Investigation PDF
+              </button>
+
+            </div>
+
+            <RiskTimeline transactions={transactions} />
+
+          </section>
 
           <section className="panel">
             <h2>Recommended Actions</h2>
@@ -143,10 +149,7 @@ function Report({
             </div>
           </section>
 
-          <section className="panel">
-            <h2>Transaction History</h2>
-            <TransactionList transactions={transactions} />
-          </section>
+
         </>
       )}
     </main>

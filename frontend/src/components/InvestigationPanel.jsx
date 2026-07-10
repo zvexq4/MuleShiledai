@@ -1,5 +1,4 @@
-import generateInvestigationPDF from "../utils/generateInvestigationPDF";
-import { FileDown, ShieldAlert, User, MapPin, CreditCard } from "lucide-react";
+import { ShieldAlert, User, MapPin, CreditCard } from "lucide-react";
 
 function InvestigationPanel({
     selectedUser,
@@ -145,23 +144,6 @@ function InvestigationPanel({
 
             </div>
 
-            <button
-                className="download-investigation-btn"
-                onClick={() =>
-                    generateInvestigationPDF(
-                        selectedUser,
-                        riskDetail,
-                        explanation,
-                        transactions
-                    )
-                }
-            >
-
-                <FileDown size={18} />
-
-                Download Investigation PDF
-
-            </button>
 
         </aside>
     );

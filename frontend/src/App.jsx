@@ -138,6 +138,7 @@ function App() {
       <div className="app">
         <Header
           activePage={activePage}
+          selectedUser={selectedUser}
           searchValue={searchValue}
           onSearchChange={setSearchValue}
         />

@@ -13,14 +13,6 @@ function DetailPanel({ riskDetail, explanation, selectedUser, getRiskColor }) {
         <>
           <h2>Account Detail</h2>
 
-          <div className="account-title">👤 {selectedUser.name}</div>
-
-          <div className="user-meta">
-            <span>{selectedUser.account_id}</span>
-            <span>{selectedUser.city}</span>
-            <span>{selectedUser.age} years old</span>
-          </div>
-
           <div className="score-box">
             <p>Risk Score</p>
             <h1>{riskDetail.risk_score}/100</h1>
@@ -40,15 +32,23 @@ function DetailPanel({ riskDetail, explanation, selectedUser, getRiskColor }) {
           <div className="breakdown">
             <div>
               <span>Multiple Senders</span>
-              <strong>+{riskDetail.risk_breakdown.multiple_senders}</strong>
+              <strong>
+                +{riskDetail?.risk_breakdown?.multiple_senders ?? 0}
+              </strong>
             </div>
+
             <div>
               <span>Rapid Transfer</span>
-              <strong>+{riskDetail.risk_breakdown.rapid_transfer}</strong>
+              <strong>
+                +{riskDetail?.risk_breakdown?.rapid_transfer ?? 0}
+              </strong>
             </div>
+
             <div>
               <span>New Device</span>
-              <strong>+{riskDetail.risk_breakdown.new_device}</strong>
+              <strong>
+                +{riskDetail?.risk_breakdown?.new_device ?? 0}
+              </strong>
             </div>
           </div>
 

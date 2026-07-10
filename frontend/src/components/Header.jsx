@@ -1,23 +1,57 @@
 import { Bell, User } from "lucide-react";
 
 const PAGE_LABELS = {
-  dashboard: "Mule Account Monitor",
+  dashboard: "Dashboard",
   accounts: "Accounts",
   alerts: "Alerts",
   report: "Reports",
   analytics: "Analytics",
   simulator: "Settings & Simulator",
+  contact: "Contact",
 };
 
-function Header({ activePage, searchValue, onSearchChange }) {
-  const pageLabel = PAGE_LABELS[activePage] || "Dashboard";
+function Header({
+  activePage,
+  selectedUser,
+  searchValue,
+  onSearchChange,
+}) {
+  const getBreadcrumb = () => {
+    if (activePage === "report" && selectedUser) {
+      return (
+        <>
+          <span className="brand">MuleShield</span>
+          <span className="crumb-sep">›</span>
+
+          <span>Accounts</span>
+          <span className="crumb-sep">›</span>
+
+          <span>Reports</span>
+          <span className="crumb-sep">›</span>
+
+          <span className="crumb-current">
+            {selectedUser.account_id}
+          </span>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <span className="brand">MuleShield</span>
+        <span className="crumb-sep">›</span>
+
+        <span className="crumb-current">
+          {PAGE_LABELS[activePage] || "Dashboard"}
+        </span>
+      </>
+    );
+  };
 
   return (
     <header className="topbar">
       <div className="breadcrumb">
-        <span className="brand">MuleShield-AI</span>
-        <span className="crumb-sep">›</span>
-        <span className="crumb-current">{pageLabel}</span>
+        {getBreadcrumb()}
       </div>
 
       <div className="topbar-actions">

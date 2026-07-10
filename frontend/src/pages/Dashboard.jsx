@@ -224,22 +224,36 @@ function Dashboard({
               </div>
 
               <div className="inspector-signals">
-                {riskDetail &&
-                  Object.entries(riskDetail.risk_breakdown).map(([key, value], i) => (
+                {Object.entries(riskDetail?.risk_breakdown ?? {}).map(
+                  ([key, value], i) => (
                     <div className="signal-card" key={key}>
                       <div className="signal-head">
                         <span>
-                          {i + 1}. <strong>{IMPACT_META[key]?.label || key}</strong>
+                          {i + 1}.{" "}
+                          <strong>
+                            {IMPACT_META?.[key]?.label ?? key}
+                          </strong>
                         </span>
+
                         <span className="signal-impact">
                           {impactLevel(value)} Impact
                         </span>
                       </div>
+
                       <div className="signal-desc">
-                        {IMPACT_META[key]?.text(value)}
+                        {IMPACT_META?.[key]?.text
+                          ? IMPACT_META[key].text(value)
+                          : "No additional explanation available."}
                       </div>
                     </div>
-                  ))}
+                  )
+                )}
+
+                {Object.keys(riskDetail?.risk_breakdown ?? {}).length === 0 && (
+                  <div className="inspector-empty">
+                    No AI signals available for this account.
+                  </div>
+                )}
               </div>
 
               {explanation?.explanation && (

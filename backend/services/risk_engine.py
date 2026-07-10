@@ -17,11 +17,6 @@ def get_risk_level(score):
 def calculate_risk(account_id, transactions):
     score = 0
     reasons = []
-    risk_breakdown = {
-        "multiple_senders": 0,
-        "rapid_transfer": 0,
-        "new_device": 0
-    }
 
     account_transactions = [
         tx for tx in transactions if tx["account_id"] == account_id
@@ -37,8 +32,7 @@ def calculate_risk(account_id, transactions):
 
     if len(unique_senders) >= 5:
         score += 30
-        risk_breakdown["multiple_senders"] = 30
-        reasons.append("Multiple incoming transfers detected")
+        reasons.append("Multiple different senders detected")
 
     if (
         total_incoming > 0
@@ -47,14 +41,14 @@ def calculate_risk(account_id, transactions):
         and total_outgoing / total_incoming >= 0.8
     ):
         score += 40
-        risk_breakdown["rapid_transfer"] = 40
-        reasons.append("Most of the money was transferred out quickly")
+        reasons.append(
+            "Many different senders and most of the money was transferred out quickly"
+        )
 
     devices = set(tx["device_id"] for tx in account_transactions)
 
     if "NEW_DEVICE" in devices:
         score += 20
-        risk_breakdown["new_device"] = 20
         reasons.append("New device activity detected")
 
     if score > 100:
@@ -64,6 +58,12 @@ def calculate_risk(account_id, transactions):
         "account_id": account_id,
         "risk_score": score,
         "risk_level": get_risk_level(score),
-        "risk_breakdown": risk_breakdown,
         "reasons": reasons
     }
+
+
+if __name__ == "__main__":
+    transactions = load_transactions("../datasets/sample_transactions.json")
+
+    print(calculate_risk("ACC001", transactions))
+    print(calculate_risk("ACC_RISKY", transactions))

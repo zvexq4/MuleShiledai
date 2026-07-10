@@ -114,12 +114,22 @@ function Report({
             </div>
           </section>
 
-          <DetailPanel
-            riskDetail={riskDetail}
-            explanation={explanation}
-            selectedUser={selectedUser}
-            getRiskColor={getRiskColor}
-          />
+          <div className="report-detail-layout">
+            <DetailPanel
+              riskDetail={riskDetail}
+              explanation={explanation}
+              selectedUser={selectedUser}
+              getRiskColor={getRiskColor}
+            />
+
+            <InvestigationPanel
+              selectedUser={selectedUser}
+              riskDetail={riskDetail}
+              explanation={explanation}
+              transactions={transactions}
+              getRiskColor={getRiskColor}
+            />
+          </div>
 
           <RiskTimeline transactions={transactions} />
 
@@ -135,19 +145,8 @@ function Report({
 
           <section className="panel">
             <h2>Transaction History</h2>
-            <InvestigationPanel
-              selectedUser={selectedUser}
-              riskDetail={riskDetail}
-              explanation={explanation}
-              transactions={transactions}
-            />
+            <TransactionList transactions={transactions} />
           </section>
-          <InvestigationPanel
-            selectedUser={selectedUser}
-            riskDetail={riskDetail}
-            explanation={explanation}
-            transactions={transactions}
-          />
         </>
       )}
     </main>

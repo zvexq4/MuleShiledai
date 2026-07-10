@@ -8,6 +8,7 @@ import "./styles/monitor.css";
 import "./styles/accounts.css";
 import "./styles/analytics.css";
 import "./styles/report.css";
+import "./styles/investigationPanel.css";
 import "./styles/simulator.css";
 import App from './App.jsx'
 

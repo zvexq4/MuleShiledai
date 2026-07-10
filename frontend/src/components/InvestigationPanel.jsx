@@ -1,113 +1,170 @@
-import { jsPDF } from "jspdf";
+import generateInvestigationPDF from "../utils/generateInvestigationPDF";
+import { FileDown, ShieldAlert, User, MapPin, CreditCard } from "lucide-react";
 
 function InvestigationPanel({
     selectedUser,
     riskDetail,
     explanation,
     transactions,
+    getRiskColor,
 }) {
-
     if (!selectedUser || !riskDetail) return null;
 
-    const generatePDF = () => {
-
-        const doc = new jsPDF();
-
-        doc.setFontSize(22);
-        doc.text("MuleShield AI", 20, 20);
-
-        doc.setFontSize(15);
-        doc.text("Financial Crime Investigation Report", 20, 32);
-
-        doc.line(20, 38, 190, 38);
-
-        doc.setFontSize(12);
-
-        doc.text(`Customer : ${selectedUser.name}`, 20, 50);
-        doc.text(`Account ID : ${selectedUser.account_id}`, 20, 60);
-        doc.text(`City : ${selectedUser.city}`, 20, 70);
-
-        doc.text(
-            `Risk Score : ${riskDetail.risk_score}/100`,
-            20,
-            85
-        );
-
-        doc.text(
-            `Risk Level : ${riskDetail.risk_level}`,
-            20,
-            95
-        );
-
-        doc.line(20, 105, 190, 105);
-
-        doc.text("AI Explanation", 20, 120);
-
-        doc.setFontSize(10);
-
-        doc.text(
-            explanation.summary || "No explanation available.",
-            20,
-            132,
-            { maxWidth: 170 }
-        );
-
-        let y = 170;
-
-        doc.setFontSize(12);
-
-        doc.text("Recent Transactions", 20, y);
-
-        y += 12;
-
-        transactions.slice(0, 10).forEach(tx => {
-
-            doc.setFontSize(10);
-
-            doc.text(
-                `${tx.type}   ${tx.amount} TRY`,
-                20,
-                y
-            );
-
-            y += 8;
-
-        });
-
-        doc.save(`${selectedUser.account_id}_report.pdf`);
-
-    };
+    const latestTransactions = transactions.slice(0, 5);
 
     return (
+        <aside className="investigation-panel">
 
-        <section className="panel">
+            <div className="investigation-header">
+                <ShieldAlert size={20} />
+                <h2>Investigation Case</h2>
+            </div>
 
-            <h2>Investigation Case</h2>
+            <div className="investigation-card">
 
-            <p><strong>{selectedUser.name}</strong></p>
+                <div className="profile-row">
+                    <User size={18} />
+                    <div>
+                        <strong>{selectedUser.name}</strong>
+                        <span>{selectedUser.account_id}</span>
+                    </div>
+                </div>
 
-            <p>{selectedUser.account_id}</p>
+                <div className="profile-row">
+                    <MapPin size={18} />
+                    <span>{selectedUser.city}</span>
+                </div>
 
-            <p>{selectedUser.city}</p>
+                <div className="profile-row">
+                    <CreditCard size={18} />
+                    <span>{selectedUser.age} Years Old</span>
+                </div>
 
-            <br />
+            </div>
 
-            <p>
-                Risk Score:
-                <strong> {riskDetail.risk_score}/100</strong>
-            </p>
+            <div className="investigation-card">
+
+                <h3>Risk Overview</h3>
+
+                <div className="risk-score-big">
+
+                    <span
+                        className="risk-circle"
+                        style={{
+                            borderColor: getRiskColor(riskDetail.risk_level),
+                            color: getRiskColor(riskDetail.risk_level),
+                        }}
+                    >
+                        {riskDetail.risk_score}
+                    </span>
+
+                    <div>
+
+                        <strong>{riskDetail.risk_level.toUpperCase()}</strong>
+
+                        <p>
+                            AI Confidence: High
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div className="investigation-card">
+
+                <h3>AI Findings</h3>
+
+                <ul className="finding-list">
+
+                    <li>
+                        New Device Activity
+                    </li>
+
+                    <li>
+                        Rapid Money Transfer
+                    </li>
+
+                    <li>
+                        Multiple Counterparties
+                    </li>
+
+                    <li>
+                        High Risk Behaviour
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div className="investigation-card">
+
+                <h3>Latest Transactions</h3>
+
+                {latestTransactions.map((tx) => (
+
+                    <div
+                        className="mini-transaction"
+                        key={tx.transaction_id}
+                    >
+
+                        <div>
+
+                            <strong>
+
+                                {tx.type === "incoming"
+                                    ? "Incoming"
+                                    : "Outgoing"}
+
+                            </strong>
+
+                            <small>
+
+                                {tx.sender_id}
+                                {" → "}
+                                {tx.receiver_id}
+
+                            </small>
+
+                        </div>
+
+                        <span>
+
+                            {tx.type === "incoming"
+                                ? "+"
+                                : "-"}
+
+                            {tx.amount}
+
+                        </span>
+
+                    </div>
+
+                ))}
+
+            </div>
 
             <button
-                className="download-report-btn"
-                onClick={generatePDF}
+                className="download-investigation-btn"
+                onClick={() =>
+                    generateInvestigationPDF(
+                        selectedUser,
+                        riskDetail,
+                        explanation,
+                        transactions
+                    )
+                }
             >
+
+                <FileDown size={18} />
+
                 Download Investigation PDF
+
             </button>
 
-        </section>
-
+        </aside>
     );
-
 }
 
 export default InvestigationPanel;

@@ -7,6 +7,7 @@ from routes.risk import router as risk_router
 from routes.transactions import router as transactions_router
 from routes.dashboard import router as dashboard_router
 from routes.simulation import router as simulation_router
+from routes.dataset import router as dataset_router
 
 app = FastAPI(
     title="MuleShield AI",
@@ -27,6 +28,7 @@ app.include_router(transactions_router)
 app.include_router(explain_router)
 app.include_router(dashboard_router)
 app.include_router(simulation_router)
+app.include_router(dataset_router)
 
 @app.get("/")
 def home():

@@ -1,32 +1,45 @@
 from fastapi import APIRouter
-from services.risk_engine import calculate_risk, load_transactions
+
+from services.data_provider import get_transactions, get_users
+from services.risk_engine import calculate_risk
 
 router = APIRouter()
 
 
 @router.get("/dashboard")
 def get_dashboard():
-    transactions = load_transactions("../datasets/sample_transactions.json")
-    account_ids = sorted(set(tx["account_id"] for tx in transactions))
+    users = get_users()
+    transactions = get_transactions()
 
-    safe_count = 0
-    suspicious_count = 0
-    critical_count = 0
+    safe_accounts = 0
+    suspicious_accounts = 0
+    critical_accounts = 0
 
-    for account_id in account_ids:
-        risk = calculate_risk(account_id, transactions)
+    for user in users:
+        account_id = user["account_id"]
 
-        if risk["risk_level"] == "safe":
-            safe_count += 1
-        elif risk["risk_level"] == "suspicious":
-            suspicious_count += 1
-        elif risk["risk_level"] == "critical":
-            critical_count += 1
+        account_transactions = [
+            tx
+            for tx in transactions
+            if tx.get("account_id") == account_id
+            or tx.get("sender_id") == account_id
+            or tx.get("receiver_id") == account_id
+        ]
+
+        risk = calculate_risk(account_id, account_transactions)
+        risk_level = risk["risk_level"]
+
+        if risk_level == "critical":
+            critical_accounts += 1
+        elif risk_level == "suspicious":
+            suspicious_accounts += 1
+        else:
+            safe_accounts += 1
 
     return {
-        "total_accounts": len(account_ids),
-        "safe_accounts": safe_count,
-        "suspicious_accounts": suspicious_count,
-        "critical_accounts": critical_count,
-        "total_transactions": len(transactions)
+        "total_accounts": len(users),
+        "safe_accounts": safe_accounts,
+        "suspicious_accounts": suspicious_accounts,
+        "critical_accounts": critical_accounts,
+        "total_transactions": len(transactions),
     }

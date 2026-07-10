@@ -1,39 +1,77 @@
-from fastapi import APIRouter
-from services.risk_engine import calculate_risk, load_transactions
+from fastapi import APIRouter, HTTPException
+
+from services.data_provider import get_transactions
+from services.risk_engine import calculate_risk
+
 
 router = APIRouter()
 
 
+def get_account_transactions(
+    account_id: str,
+    transactions: list[dict],
+) -> list[dict]:
+    return [
+        transaction
+        for transaction in transactions
+        if transaction.get("account_id") == account_id
+        or transaction.get("sender_id") == account_id
+        or transaction.get("receiver_id") == account_id
+    ]
+
+
+def create_explanation(risk: dict) -> str:
+    breakdown = risk.get("risk_breakdown", {})
+
+    factors: list[str] = []
+
+    if breakdown.get("multiple_senders", 0) > 0:
+        factors.append("multiple incoming senders")
+
+    if breakdown.get("rapid_transfer", 0) > 0:
+        factors.append("rapid outgoing transfers")
+
+    if breakdown.get("new_device", 0) > 0:
+        factors.append("new device activity")
+
+    risk_score = risk.get("risk_score", 0)
+    risk_level = risk.get("risk_level", "safe")
+
+    if not factors:
+        return (
+            "No significant mule account indicators were detected. "
+            "The account currently shows normal transaction behavior."
+        )
+
+    factor_text = ", ".join(factors)
+
+    return (
+        f"This account has a {risk_level} risk level with a score of "
+        f"{risk_score}/100. Detected indicators include {factor_text}. "
+        "The account should be prioritized for manual fraud review."
+    )
+
+
 @router.get("/explain/{account_id}")
-def explain_risk(account_id: str):
-    transactions = load_transactions("../datasets/sample_transactions.json")
-    risk = calculate_risk(account_id, transactions)
+def explain_account(account_id: str):
+    transactions = get_transactions()
 
-    breakdown = risk["risk_breakdown"]
+    account_transactions = get_account_transactions(
+        account_id,
+        transactions,
+    )
 
-    if risk["risk_level"] == "critical":
-        explanation = (
-            "This account shows a high-risk mule account pattern. "
-            f"Multiple senders contributed +{breakdown['multiple_senders']} points, "
-            f"rapid outgoing transfer behavior contributed +{breakdown['rapid_transfer']} points, "
-            f"and new device activity contributed +{breakdown['new_device']} points. "
-            "The case should be prioritized for fraud team review."
+    if not account_transactions:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No transactions found for account {account_id}",
         )
-    elif risk["risk_level"] == "suspicious":
-        explanation = (
-            "This account shows some unusual behavior. "
-            "The activity should be reviewed before it becomes a higher-risk case."
-        )
-    else:
-        explanation = (
-            "No critical mule account behavior was detected for this account."
-        )
+
+    risk = calculate_risk(account_id, account_transactions)
 
     return {
         "account_id": account_id,
-        "risk_score": risk["risk_score"],
-        "risk_level": risk["risk_level"],
-        "risk_breakdown": risk["risk_breakdown"],
-        "reasons": risk["reasons"],
-        "explanation": explanation
+        "risk_score": risk.get("risk_score", 0),
+        "risk_level": risk.get("risk_level", "safe"),
+        "explanation": create_explanation(risk),
     }

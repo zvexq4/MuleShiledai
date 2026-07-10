@@ -1,3 +1,4 @@
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -112,7 +113,7 @@ def normalize_transaction(row: pd.Series, index: int) -> dict:
         "timestamp": timestamp,
     }
 
-
+@lru_cache(maxsize=1)
 def normalize_transactions() -> list[dict]:
     dataframe = load_excel_dataframe()
 

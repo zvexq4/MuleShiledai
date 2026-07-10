@@ -38,24 +38,74 @@ function App() {
     return "#22c55e";
   };
 
+  const adaptWalletForFrontend = (wallet) => {
+    return {
+      ...wallet,
+      account_id: wallet.account_id || wallet.wallet_id,
+      wallet_id: wallet.wallet_id || wallet.account_id,
+      name: wallet.name || "Hackathon Wallet",
+      city: wallet.city || "",
+      age: wallet.age || null,
+      risk_breakdown: wallet.risk_breakdown || {},
+      metrics: wallet.metrics || {},
+      reasons: wallet.reasons || [],
+    };
+  };
+
   const refreshData = async () => {
-    const dashboardRes = await axios.get(`${API_URL}/dashboard`);
-    const accountsRes = await axios.get(`${API_URL}/accounts`);
+    const response = await axios.get(
+      `${API_URL}/dataset/dashboard`
+    );
 
-    setDashboard(dashboardRes.data);
-    setAccounts(accountsRes.data.accounts);
+    const summary = response.data.summary || {};
+    const walletList = Array.isArray(response.data.wallets)
+      ? response.data.wallets.map(adaptWalletForFrontend)
+      : [];
 
-    return accountsRes.data.accounts;
+    setDashboard({
+      total_accounts:
+        summary.total_wallets || walletList.length,
+      safe_accounts:
+        summary.safe_wallets || 0,
+      suspicious_accounts:
+        summary.suspicious_wallets || 0,
+      critical_accounts:
+        summary.critical_wallets || 0,
+      total_transactions:
+        summary.total_transactions || 0,
+
+      total_wallets:
+        summary.total_wallets || walletList.length,
+      safe_wallets:
+        summary.safe_wallets || 0,
+      suspicious_wallets:
+        summary.suspicious_wallets || 0,
+      critical_wallets:
+        summary.critical_wallets || 0,
+    });
+
+    setAccounts(walletList);
+
+    return walletList;
   };
 
   useEffect(() => {
     const initialize = async () => {
       try {
         await refreshData();
+      } catch (error) {
+        console.error(
+          "Hackathon dataset could not be loaded:",
+          error
+        );
+
+        setToast(
+          "Hackathon dataset could not be loaded."
+        );
       } finally {
         setTimeout(() => {
           setLoading(false);
-        }, 1500);
+        }, 1200);
       }
     };
 
@@ -63,15 +113,70 @@ function App() {
   }, []);
 
   const loadAccount = async (account) => {
-    const risk = await axios.get(`${API_URL}/risk/${account.account_id}`);
-    const explain = await axios.get(`${API_URL}/explain/${account.account_id}`);
-    const txs = await axios.get(`${API_URL}/transactions/${account.account_id}`);
+  const walletId =
+    account.wallet_id || account.account_id;
 
-    setSelectedUser(account);
-    setRiskDetail(risk.data);
-    setExplanation(explain.data);
-    setTransactions(txs.data.transactions);
-  };
+  if (!walletId) {
+    return;
+  }
+
+  try {
+    const [detailResponse, transactionsResponse] =
+      await Promise.all([
+        axios.get(
+          `${API_URL}/dataset/wallet/${walletId}`
+        ),
+        axios.get(
+          `${API_URL}/dataset/wallet/${walletId}/transactions`
+        ),
+      ]);
+
+    const walletDetail = adaptWalletForFrontend(
+      detailResponse.data
+    );
+
+    const walletTransactions =
+      transactionsResponse.data.transactions || [];
+
+    const adaptedTransactions =
+      walletTransactions.map((transaction) => ({
+        ...transaction,
+
+        // Eski component'lerin beklediği alanlar
+        type: transaction.direction,
+        account_id: walletId,
+        sender_id: transaction.source,
+        receiver_id: transaction.target,
+        transaction_id:
+          transaction.transaction_id || "UNKNOWN",
+      }));
+
+    setSelectedUser(walletDetail);
+    setRiskDetail(walletDetail);
+
+    setExplanation({
+      explanation:
+        walletDetail.reasons?.length > 0
+          ? walletDetail.reasons.join(" ")
+          : "No significant risk indicators were detected.",
+    });
+
+    setTransactions(adaptedTransactions);
+  } catch (error) {
+    console.error(
+      "Wallet information could not be loaded:",
+      error
+    );
+
+    setToast(
+      "Wallet information could not be loaded."
+    );
+
+    setTimeout(() => {
+      setToast("");
+    }, 3000);
+  }
+};
 
   const clearSelectedAccount = () => {
     setSelectedUser(null);
@@ -81,49 +186,65 @@ function App() {
   };
 
   const addSimulationTransaction = async () => {
-    await axios.post(`${API_URL}/transactions`, {
-      account_id: simAccount,
-      amount: Number(simAmount),
-      type: "incoming",
-      sender_id: simSender,
-      receiver_id: simAccount,
-      device_id: simDevice,
-      location: "Ankara",
-    });
+    try {
+      await axios.post(`${API_URL}/transactions`, {
+        account_id: simAccount,
+        amount: Number(simAmount),
+        type: "incoming",
+        sender_id: simSender,
+        receiver_id: simAccount,
+        device_id: simDevice,
+        location: "Ankara",
+      });
 
-    const updatedAccounts = await refreshData();
-    const updatedAccount = updatedAccounts.find(
-      (acc) => acc.account_id === simAccount
-    );
+      setToast(
+        "Demo transaction added successfully."
+      );
 
-    if (updatedAccount) {
-      await loadAccount(updatedAccount);
+      setTimeout(() => {
+        setToast("");
+      }, 3000);
+    } catch (error) {
+      console.error(
+        "Simulation transaction could not be added:",
+        error
+      );
+
+      setToast(
+        "Simulation transaction could not be added."
+      );
+
+      setTimeout(() => {
+        setToast("");
+      }, 3000);
     }
-
-    setActivePage("report");
-    setToast("Transaction added. AI report generated.");
-
-    setTimeout(() => {
-      setToast("");
-    }, 3000);
   };
 
   const resetSimulation = async () => {
-    await axios.post(`${API_URL}/simulation/reset`);
+    try {
+      await axios.post(`${API_URL}/simulation/reset`);
 
-    const updatedAccounts = await refreshData();
+      setToast(
+        "Demo dataset reset successfully."
+      );
 
-    clearSelectedAccount();
+      setTimeout(() => {
+        setToast("");
+      }, 3000);
+    } catch (error) {
+      console.error(
+        "Demo dataset could not be reset:",
+        error
+      );
 
-    if (updatedAccounts.length > 0) {
-      setSimAccount(updatedAccounts[0].account_id);
+      setToast(
+        "Demo dataset could not be reset."
+      );
+
+      setTimeout(() => {
+        setToast("");
+      }, 3000);
     }
-
-    setToast("Demo dataset reset successfully.");
-
-    setTimeout(() => {
-      setToast("");
-    }, 3000);
   };
 
   if (loading) {
@@ -133,7 +254,11 @@ function App() {
   return (
     <div className="shell">
       <Toast message={toast} />
-      <Sidebar activePage={activePage} setActivePage={setActivePage} />
+
+      <Sidebar
+        activePage={activePage}
+        setActivePage={setActivePage}
+      />
 
       <div className="app">
         <Header
@@ -167,14 +292,19 @@ function App() {
         )}
 
         {activePage === "analytics" && (
-          <Analytics dashboard={dashboard} accounts={accounts} />
+          <Analytics
+            dashboard={dashboard}
+            accounts={accounts}
+          />
         )}
 
         {activePage === "report" && (
           <Report
             accounts={accounts}
             loadAccount={loadAccount}
-            clearSelectedAccount={clearSelectedAccount}
+            clearSelectedAccount={
+              clearSelectedAccount
+            }
             riskDetail={riskDetail}
             explanation={explanation}
             selectedUser={selectedUser}
@@ -202,7 +332,9 @@ function App() {
             setSimSender={setSimSender}
             simDevice={simDevice}
             setSimDevice={setSimDevice}
-            addSimulationTransaction={addSimulationTransaction}
+            addSimulationTransaction={
+              addSimulationTransaction
+            }
             resetSimulation={resetSimulation}
           />
         )}

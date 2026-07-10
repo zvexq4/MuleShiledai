@@ -16,15 +16,9 @@ def get_risk_level(score: int) -> str:
     return "safe"
 
 
-<<<<<<< HEAD
-def calculate_risk(account_id, transactions):
-    score = 0
-    reasons = []
-=======
 def parse_timestamp(value: str | None) -> datetime | None:
     if not value:
         return None
->>>>>>> 477a2b3 (Integrate hackathon dataset with unified risk engine)
 
     try:
         return datetime.fromisoformat(value)
@@ -35,59 +29,45 @@ def parse_timestamp(value: str | None) -> datetime | None:
 def score_multiple_senders(unique_senders: int) -> int:
     if unique_senders >= 50:
         return 25
+
     if unique_senders >= 25:
         return 20
+
     if unique_senders >= 10:
         return 10
+
     if unique_senders >= 5:
         return 5
 
     return 0
 
-<<<<<<< HEAD
-    if len(unique_senders) >= 5:
-        score += 30
-        reasons.append("Multiple different senders detected")
-
-    if (
-        total_incoming > 0
-        and len(unique_senders) >= 5
-        and total_incoming >= 5000
-        and total_outgoing / total_incoming >= 0.8
-    ):
-        score += 40
-        reasons.append(
-            "Many different senders and most of the money was transferred out quickly"
-        )
-=======
 
 def score_rapid_transfers(rapid_transfer_count: int) -> int:
     if rapid_transfer_count >= 20:
         return 30
+
     if rapid_transfer_count >= 10:
         return 25
+
     if rapid_transfer_count >= 3:
         return 20
+
     if rapid_transfer_count >= 1:
         return 10
->>>>>>> 477a2b3 (Integrate hackathon dataset with unified risk engine)
 
     return 0
 
-<<<<<<< HEAD
-    if "NEW_DEVICE" in devices:
-        score += 20
-        reasons.append("New device activity detected")
-=======
->>>>>>> 477a2b3 (Integrate hackathon dataset with unified risk engine)
 
 def score_fan_out(unique_targets: int) -> int:
     if unique_targets >= 500:
         return 25
+
     if unique_targets >= 100:
         return 20
+
     if unique_targets >= 25:
         return 10
+
     if unique_targets >= 10:
         return 5
 
@@ -97,8 +77,10 @@ def score_fan_out(unique_targets: int) -> int:
 def score_wallet_chain(wallet_transfer_count: int) -> int:
     if wallet_transfer_count >= 20:
         return 15
+
     if wallet_transfer_count >= 10:
         return 10
+
     if wallet_transfer_count >= 3:
         return 5
 
@@ -117,10 +99,13 @@ def score_flow_imbalance(
 
     if ratio >= 10:
         return 10
+
     if ratio >= 5:
         return 8
+
     if ratio >= 2:
         return 5
+
     if ratio >= 1.2:
         return 3
 
@@ -129,7 +114,6 @@ def score_flow_imbalance(
 
 def normalize_demo_transaction(transaction: dict) -> dict:
     transaction_type = transaction.get("type")
-
     account_id = transaction.get("account_id")
     sender_id = transaction.get("sender_id")
     receiver_id = transaction.get("receiver_id")
@@ -172,8 +156,12 @@ def normalize_transactions(transactions: list[dict]) -> list[dict]:
     normalized: list[dict] = []
 
     for transaction in transactions:
-        # Excel provider zaten ortak formata dönüştürüyor.
-        if "direction" in transaction and "source" in transaction:
+        # Excel provider işlemleri zaten ortak formata dönüştürüyor.
+        if (
+            "direction" in transaction
+            and "source" in transaction
+            and "target" in transaction
+        ):
             normalized.append(transaction)
         else:
             normalized.append(
@@ -269,6 +257,9 @@ def count_rapid_transfers(
 
         amount = float(transaction.get("amount", 0))
 
+        if amount <= 0:
+            continue
+
         incoming_events.append(
             {
                 "timestamp": timestamp,
@@ -286,12 +277,15 @@ def count_rapid_transfers(
         if not timestamp:
             continue
 
+        amount = float(transaction.get("amount", 0))
+
+        if amount <= 0:
+            continue
+
         outgoing_events.append(
             {
                 "timestamp": timestamp,
-                "amount": float(
-                    transaction.get("amount", 0)
-                ),
+                "amount": amount,
             }
         )
 
@@ -306,10 +300,6 @@ def count_rapid_transfers(
 
     for outgoing in outgoing_events:
         outgoing_amount = outgoing["amount"]
-
-        if outgoing_amount <= 0:
-            continue
-
         window_start = (
             outgoing["timestamp"]
             - RAPID_TRANSFER_WINDOW
@@ -331,8 +321,8 @@ def count_rapid_transfers(
             for incoming in eligible_incoming
         )
 
-        # Yakın zamandaki girişler çıkışın en az yarısını
-        # açıklayabiliyorsa hızlı transfer sinyali kabul edilir.
+        # Yakın zamandaki girişler, çıkış tutarının en az
+        # yarısını açıklıyorsa hızlı transfer sinyali sayılır.
         if available_amount < outgoing_amount * 0.5:
             continue
 
@@ -372,12 +362,8 @@ def analyze_wallet(
         + activity["wallet_transfers_out"]
     )
 
-    unique_senders = len(
-        activity["incoming_senders"]
-    )
-    unique_targets = len(
-        activity["outgoing_targets"]
-    )
+    unique_senders = len(activity["incoming_senders"])
+    unique_targets = len(activity["outgoing_targets"])
 
     rapid_transfer_count = count_rapid_transfers(
         incoming_transactions,
@@ -393,6 +379,7 @@ def analyze_wallet(
         activity["total_incoming"],
         2,
     )
+
     total_outgoing = round(
         activity["total_outgoing"],
         2,
@@ -431,8 +418,7 @@ def analyze_wallet(
 
     if breakdown["multiple_senders"] > 0:
         reasons.append(
-            f"Funds received from "
-            f"{unique_senders} unique sources"
+            f"Funds received from {unique_senders} unique sources"
         )
 
     if breakdown["rapid_transfer"] > 0:
@@ -443,8 +429,7 @@ def analyze_wallet(
 
     if breakdown["fan_out"] > 0:
         reasons.append(
-            f"Funds distributed to "
-            f"{unique_targets} unique targets"
+            f"Funds distributed to {unique_targets} unique targets"
         )
 
     if breakdown["wallet_chain"] > 0:
@@ -491,12 +476,8 @@ def analyze_wallet(
             ),
             "unique_senders": unique_senders,
             "unique_targets": unique_targets,
-            "rapid_transfer_count": (
-                rapid_transfer_count
-            ),
-            "wallet_transfer_count": (
-                wallet_transfer_count
-            ),
+            "rapid_transfer_count": rapid_transfer_count,
+            "wallet_transfer_count": wallet_transfer_count,
             "total_incoming": total_incoming,
             "total_outgoing": total_outgoing,
             "outgoing_ratio": outgoing_ratio,
@@ -513,8 +494,7 @@ def analyze_all_wallets(
 
     results = [
         analyze_wallet(wallet_id, activity)
-        for wallet_id, activity
-        in wallet_activity.items()
+        for wallet_id, activity in wallet_activity.items()
     ]
 
     return sorted(
@@ -522,9 +502,7 @@ def analyze_all_wallets(
         key=lambda wallet: (
             wallet["risk_score"],
             wallet["metrics"]["unique_targets"],
-            wallet["metrics"][
-                "rapid_transfer_count"
-            ],
+            wallet["metrics"]["rapid_transfer_count"],
         ),
         reverse=True,
     )
@@ -564,19 +542,6 @@ def calculate_risk(
     return {
         "wallet_id": account_id,
         "account_id": account_id,
-<<<<<<< HEAD
-        "risk_score": score,
-        "risk_level": get_risk_level(score),
-        "reasons": reasons
-    }
-
-
-if __name__ == "__main__":
-    transactions = load_transactions("../datasets/sample_transactions.json")
-
-    print(calculate_risk("ACC001", transactions))
-    print(calculate_risk("ACC_RISKY", transactions))
-=======
         "risk_score": 0,
         "risk_level": "safe",
         "risk_breakdown": {
@@ -600,4 +565,3 @@ if __name__ == "__main__":
             "outgoing_ratio": None,
         },
     }
->>>>>>> 477a2b3 (Integrate hackathon dataset with unified risk engine)

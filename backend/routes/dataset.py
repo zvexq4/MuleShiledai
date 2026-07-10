@@ -331,3 +331,39 @@ def get_hackathon_dashboard():
         },
         "wallets": wallets[:100],
     }
+@router.get("/wallet/{wallet_id}/transactions")
+def get_wallet_transactions(
+    wallet_id: str,
+    limit: int = 500,
+):
+    if limit < 1 or limit > 2000:
+        raise HTTPException(
+            status_code=400,
+            detail="Limit must be between 1 and 2000.",
+        )
+
+    try:
+        transactions = normalize_transactions()
+    except (FileNotFoundError, ValueError) as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error),
+        ) from error
+
+    wallet_transactions = [
+        transaction
+        for transaction in transactions
+        if transaction.get("source") == wallet_id
+        or transaction.get("target") == wallet_id
+    ]
+
+    wallet_transactions.sort(
+        key=lambda transaction: transaction.get("timestamp") or "",
+        reverse=True,
+    )
+
+    return {
+        "wallet_id": wallet_id,
+        "total": len(wallet_transactions),
+        "transactions": wallet_transactions[:limit],
+    }

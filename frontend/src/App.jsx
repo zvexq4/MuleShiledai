@@ -262,8 +262,9 @@ function App() {
         <Header
           activePage={activePage}
           selectedUser={selectedUser}
-          searchValue={searchValue}
-          onSearchChange={setSearchValue}
+          accounts={accounts}
+          loadAccount={loadAccount}
+          setActivePage={setActivePage}
         />
 
         {activePage === "dashboard" && (
@@ -277,6 +278,7 @@ function App() {
             selectedUser={selectedUser}
             riskDetail={riskDetail}
             explanation={explanation}
+            transactions={transactions}
           />
         )}
 

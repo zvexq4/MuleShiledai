@@ -235,3 +235,282 @@
   font-size: 14px;
   text-align: center;
 }
+/* ===== CRITICAL NOTIFICATION CENTER ===== */
+
+.notification-wrapper {
+  position: relative;
+}
+
+.notification-button {
+  position: relative;
+}
+
+.notification-button.active {
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+  background: rgba(56, 189, 248, 0.1);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -6px;
+  right: -7px;
+
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 2px solid #060b18;
+  border-radius: 999px;
+
+  background: #ef4444;
+  color: #ffffff;
+
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.notification-panel {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 100;
+
+  width: 390px;
+  overflow: hidden;
+
+  border: 1px solid #26364d;
+  border-radius: 15px;
+
+  background: #08101e;
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(56, 189, 248, 0.04);
+}
+
+.notification-panel-header {
+  min-height: 72px;
+  padding: 16px 17px;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+
+  border-bottom: 1px solid #1e293b;
+  background: #060b18;
+}
+
+.notification-panel-header span {
+  color: #64748b;
+
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  letter-spacing: 0.09em;
+}
+
+.notification-panel-header h3 {
+  margin: 4px 0 0;
+
+  color: #f8fafc;
+  font-size: 15px;
+}
+
+.notification-close {
+  width: 29px;
+  height: 29px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+
+  background: #0b1324;
+  color: #64748b;
+}
+
+.notification-close:hover {
+  color: #f8fafc;
+  border-color: #334155;
+}
+
+.notification-summary {
+  margin: 14px;
+  padding: 13px 14px;
+
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  border-radius: 10px;
+
+  background: rgba(239, 68, 68, 0.055);
+  color: #ef4444;
+}
+
+.notification-summary div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.notification-summary strong {
+  color: #f8fafc;
+  font-size: 11px;
+}
+
+.notification-summary span {
+  color: #94a3b8;
+  font-size: 9px;
+}
+
+.notification-list {
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 0 10px 10px;
+}
+
+.notification-item {
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 9px;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 10px;
+
+  border: 1px solid transparent;
+  border-radius: 10px;
+
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.notification-item:hover {
+  border-color: #1e293b;
+  background: rgba(56, 189, 248, 0.055);
+}
+
+.notification-risk-dot {
+  width: 8px;
+  height: 8px;
+
+  border-radius: 50%;
+
+  background: #ef4444;
+
+  box-shadow:
+    0 0 10px rgba(239, 68, 68, 0.65);
+}
+
+.notification-wallet {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.notification-wallet strong {
+  overflow: hidden;
+
+  color: #e2e8f0;
+
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notification-wallet small {
+  overflow: hidden;
+
+  color: #64748b;
+  font-size: 8px;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.notification-score {
+  color: #ef4444;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.notification-item > svg {
+  color: #475569;
+}
+
+.notification-empty {
+  min-height: 160px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  color: #475569;
+  text-align: center;
+}
+
+.notification-empty strong {
+  color: #cbd5e1;
+  font-size: 11px;
+}
+
+.notification-empty span {
+  max-width: 240px;
+
+  color: #64748b;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.notification-view-all {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  border: 0;
+  border-top: 1px solid #1e293b;
+
+  background: #0b1324;
+  color: #38bdf8;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.notification-view-all:hover {
+  background: rgba(56, 189, 248, 0.08);
+}
+
+@media (max-width: 600px) {
+  .notification-panel {
+    position: fixed;
+    top: 72px;
+    right: 14px;
+    left: 14px;
+
+    width: auto;
+  }
+}

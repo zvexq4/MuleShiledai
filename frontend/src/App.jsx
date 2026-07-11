@@ -103,10 +103,8 @@ function App() {
           "Hackathon dataset could not be loaded."
         );
       } finally {
-        setTimeout(() => {
           setLoading(false);
-        }, 1200);
-      }
+        }
     };
 
     initialize();

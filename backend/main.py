@@ -8,11 +8,25 @@ from routes.transactions import router as transactions_router
 from routes.dashboard import router as dashboard_router
 from routes.simulation import router as simulation_router
 from routes.dataset import router as dataset_router
+from contextlib import asynccontextmanager
+
+from services.analysis_cache import warm_analysis_cache
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    print("Preparing MuleShield AI analysis cache...")
+
+    warm_analysis_cache()
+
+    print("MuleShield AI analysis cache is ready.")
+
+    yield
 
 app = FastAPI(
     title="MuleShield AI",
     description="AI-powered Mule Account Prevention Platform",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 app.add_middleware(
     CORSMiddleware,

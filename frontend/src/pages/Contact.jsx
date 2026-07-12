@@ -20,8 +20,6 @@ function Contact() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        alert("Message sent successfully!");
-
         setForm({
             name: "",
             email: "",
@@ -38,7 +36,9 @@ function Contact() {
                     <Mail size={32} />
                     <div>
                         <h1>Contact Us</h1>
-                        <p>Need support? Send us a message.</p>
+                        <p>
+                            This form is a UI placeholder for the demo and does not send messages.
+                        </p>
                     </div>
                 </div>
 

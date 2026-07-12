@@ -14,7 +14,7 @@ const NAV_ITEMS = [
   { key: "alerts", label: "Alerts", icon: Bell },
   { key: "report", label: "Reports", icon: FileText },
   { key: "analytics", label: "Analytics", icon: BarChart2 },
-  { key: "simulator", label: "Settings", icon: Sliders },
+  { key: "simulator", label: "Simulator", icon: Sliders },
 ];
 
 function Sidebar({ activePage, setActivePage }) {

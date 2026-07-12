@@ -318,6 +318,7 @@ function App() {
             accounts={accounts}
             loadAccount={loadAccount}
             setActivePage={setActivePage}
+            getRiskColor={getRiskColor}
           />
         )}
 

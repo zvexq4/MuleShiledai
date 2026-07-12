@@ -592,8 +592,53 @@ const weeklyLoad = useMemo(
                   </th>
 
                   <th className="col-anatomy">
-                    RISK ANATOMY (XAI)
-                  </th>
+  <div className="anatomy-column-header">
+    <div className="anatomy-header-title">
+      RISK ANATOMY (XAI)
+
+      <span className="anatomy-signal-count">
+        7 SIGNALS
+      </span>
+    </div>
+
+    <div className="anatomy-header-legend">
+      <span title="Funds received from multiple independent sources">
+        <i className="legend-color legend-multiple" />
+        Multiple
+      </span>
+
+      <span title="Funds transferred shortly after being received">
+        <i className="legend-color legend-rapid" />
+        Rapid
+      </span>
+
+      <span title="Funds distributed to many unique targets">
+        <i className="legend-color legend-fanout" />
+        Fan-Out
+      </span>
+
+      <span title="Wallet-to-wallet chain activity">
+        <i className="legend-color legend-chain" />
+        Chain
+      </span>
+
+      <span title="Outgoing and incoming volume imbalance">
+        <i className="legend-color legend-flow" />
+        Flow
+      </span>
+
+      <span title="Activity from an unrecognized device">
+        <i className="legend-color legend-device" />
+        Device
+      </span>
+
+      <span title="Isolation Forest anomaly contribution">
+        <i className="legend-color legend-ml" />
+        ML
+      </span>
+    </div>
+  </div>
+</th>
                 </tr>
               </thead>
 
@@ -671,11 +716,27 @@ const weeklyLoad = useMemo(
 
                         <td className="col-anatomy">
                           <RiskAnatomyBar
-                            breakdown={
-                              account.risk_breakdown
-                              || {}
-                            }
-                          />
+  breakdown={
+    account.risk_breakdown
+    || {}
+  }
+  mlContribution={
+    Math.max(
+      0,
+      Number(
+        account.hybrid_risk_score
+        ?? account.risk_score
+        ?? 0
+      )
+      -
+      Number(
+        account.rule_risk_score
+        ?? account.risk_score
+        ?? 0
+      )
+    )
+  }
+/>
                         </td>
                       </tr>
                     );

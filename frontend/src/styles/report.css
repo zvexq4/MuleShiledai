@@ -335,3 +335,108 @@
   font-weight: 600;
 
 }
+/* ===== REPORT ACCOUNT SELECTOR ===== */
+
+.report-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.report-header h2 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 24px;
+}
+
+.report-header .empty {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.report-search {
+  width: 100%;
+  height: 44px;
+  margin-top: 4px;
+  padding: 0 14px;
+
+  border: 1px solid #26364d;
+  border-radius: 10px;
+
+  background: #080f1d;
+  color: #e2e8f0;
+
+  font-family: "Inter", sans-serif;
+  font-size: 11px;
+
+  outline: none;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.report-search::placeholder {
+  color: #64748b;
+}
+
+.report-search:focus {
+  border-color: rgba(56, 189, 248, 0.55);
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.07);
+}
+.report-account-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.report-account-item {
+  width: 100%;
+  min-height: 68px;
+  padding: 13px 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  border: 1px solid #26364d;
+  border-radius: 12px;
+
+  background: #0b1324;
+  color: #e2e8f0;
+
+  text-align: left;
+
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.report-account-item:hover {
+  transform: translateY(-1px);
+  border-color: rgba(56, 189, 248, 0.45);
+  background: rgba(56, 189, 248, 0.055);
+}
+
+.report-account-item p {
+  margin: 5px 0 0;
+  color: #64748b;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+}
+
+.report-account-risk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.report-account-risk > strong {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+}

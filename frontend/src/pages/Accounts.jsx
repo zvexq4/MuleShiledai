@@ -1,127 +1,626 @@
-import { useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import {
+  ArrowDownToLine,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpFromLine,
+  Search,
+  Send,
+  Users,
+  Zap,
+} from "lucide-react";
+import RiskAnatomyBar from "../components/RiskAnatomyBar";
 
-function Accounts({ accounts, loadAccount, setActivePage, getRiskColor }) {
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all");
+const ACCOUNTS_PER_PAGE = 12;
 
-  const filteredAccounts = accounts.filter((account) => {
-    const matchesSearch = `${account.name} ${account.account_id} ${account.city}`
-      .toLowerCase()
-      .includes(search.toLowerCase());
+function safeNumber(value) {
+  const numericValue = Number(value);
 
-    const matchesFilter = filter === "all" || account.risk_level === filter;
+  return Number.isFinite(numericValue)
+    ? numericValue
+    : 0;
+}
 
-    return matchesSearch && matchesFilter;
-  });
+function formatCompactCurrency(value) {
+  const numericValue = safeNumber(value);
+
+  return new Intl.NumberFormat("tr-TR", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(numericValue) + " TRY";
+}
+
+function getAccountId(account) {
+  return (
+    account?.account_id ||
+    account?.wallet_id ||
+    "Unknown Wallet"
+  );
+}
+
+function getDisplayedScore(account) {
+  return safeNumber(
+    account?.hybrid_risk_score ??
+    account?.risk_score
+  );
+}
+
+function getDisplayedLevel(account) {
+  return (
+    account?.hybrid_risk_level ||
+    account?.risk_level ||
+    "safe"
+  );
+}
+
+function getMlContribution(account) {
+  const hybridScore = safeNumber(
+    account?.hybrid_risk_score ??
+    account?.risk_score
+  );
+
+  const ruleScore = safeNumber(
+    account?.rule_risk_score ??
+    account?.risk_score
+  );
+
+  return Math.max(
+    0,
+    hybridScore - ruleScore
+  );
+}
+
+function getVisiblePageNumbers(
+  currentPage,
+  totalPages
+) {
+  if (totalPages <= 5) {
+    return Array.from(
+      { length: totalPages },
+      (_, index) => index + 1
+    );
+  }
+
+  let startPage = Math.max(
+    1,
+    currentPage - 2
+  );
+
+  let endPage = Math.min(
+    totalPages,
+    startPage + 4
+  );
+
+  if (endPage - startPage < 4) {
+    startPage = Math.max(
+      1,
+      endPage - 4
+    );
+  }
+
+  return Array.from(
+    {
+      length: endPage - startPage + 1,
+    },
+    (_, index) => startPage + index
+  );
+}
+
+function Accounts({
+  accounts = [],
+  loadAccount,
+  setActivePage,
+  getRiskColor,
+}) {
+  const [search, setSearch] =
+    useState("");
+
+  const [filter, setFilter] =
+    useState("all");
+
+  const [currentPage, setCurrentPage] =
+    useState(1);
+
+  const accountStats = useMemo(() => {
+    const counts = {
+      critical: 0,
+      suspicious: 0,
+      watchlist: 0,
+      safe: 0,
+    };
+
+    accounts.forEach((account) => {
+      const level =
+        getDisplayedLevel(account);
+
+      if (
+        Object.prototype.hasOwnProperty.call(
+          counts,
+          level
+        )
+      ) {
+        counts[level] += 1;
+      }
+    });
+
+    return counts;
+  }, [accounts]);
+
+  const filteredAccounts = useMemo(() => {
+    const normalizedSearch = search
+      .trim()
+      .toLowerCase();
+
+    return [...accounts]
+      .filter((account) => {
+        const level =
+          getDisplayedLevel(account);
+
+        const searchableText = [
+          account.name,
+          account.account_id,
+          account.wallet_id,
+          account.city,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+
+        const matchesSearch =
+          !normalizedSearch ||
+          searchableText.includes(
+            normalizedSearch
+          );
+
+        const matchesFilter =
+          filter === "all" ||
+          level === filter;
+
+        return (
+          matchesSearch &&
+          matchesFilter
+        );
+      })
+      .sort(
+        (firstAccount, secondAccount) =>
+          getDisplayedScore(secondAccount) -
+          getDisplayedScore(firstAccount)
+      );
+  }, [
+    accounts,
+    search,
+    filter,
+  ]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(
+      filteredAccounts.length /
+      ACCOUNTS_PER_PAGE
+    )
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, filter]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [
+    currentPage,
+    totalPages,
+  ]);
+
+  const paginatedAccounts = useMemo(() => {
+    const startIndex =
+      (currentPage - 1) *
+      ACCOUNTS_PER_PAGE;
+
+    return filteredAccounts.slice(
+      startIndex,
+      startIndex +
+      ACCOUNTS_PER_PAGE
+    );
+  }, [
+    filteredAccounts,
+    currentPage,
+  ]);
+
+  const visiblePageNumbers =
+    getVisiblePageNumbers(
+      currentPage,
+      totalPages
+    );
+
+  const firstVisibleItem =
+    filteredAccounts.length === 0
+      ? 0
+      : (currentPage - 1) *
+          ACCOUNTS_PER_PAGE +
+        1;
+
+  const lastVisibleItem = Math.min(
+    currentPage * ACCOUNTS_PER_PAGE,
+    filteredAccounts.length
+  );
+
+  const openInvestigation = async (
+    account
+  ) => {
+    await loadAccount(account);
+    setActivePage("report");
+  };
 
   return (
-    <main className="accounts-page">
+    <main className="accounts-page accounts-v2">
       <section className="panel accounts-header">
+        <div className="accounts-heading-row">
+          <div className="page-title">
+            <span className="accounts-eyebrow">
+              WALLET INTELLIGENCE
+            </span>
 
-        <div className="page-title">
-          <h1>Accounts</h1>
-          <p>
-            Monitor customer accounts and investigate suspicious activity.
-          </p>
+            <h1>Accounts</h1>
+
+            <p>
+              Monitor wallet behavior,
+              review hybrid risk and open
+              detailed investigations.
+            </p>
+          </div>
+
+          <div className="accounts-result-label">
+            {filteredAccounts.length} matching
+            wallets
+          </div>
         </div>
 
         <div className="account-stats">
-
-          <div className="stat-box">
+          <article className="stat-box">
             <span>Total Accounts</span>
             <strong>{accounts.length}</strong>
-          </div>
+            <small>Loaded wallets</small>
+          </article>
 
-          <div className="stat-box">
+          <article className="stat-box critical">
             <span>Critical</span>
             <strong>
-              {accounts.filter(a => a.risk_level === "critical").length}
+              {accountStats.critical}
             </strong>
-          </div>
+            <small>Immediate review</small>
+          </article>
 
-          <div className="stat-box">
+          <article className="stat-box suspicious">
             <span>Suspicious</span>
             <strong>
-              {accounts.filter(a => a.risk_level === "suspicious").length}
+              {accountStats.suspicious}
             </strong>
-          </div>
+            <small>Elevated risk</small>
+          </article>
 
-          <div className="stat-box">
+          <article className="stat-box watchlist">
+            <span>Watchlist</span>
+            <strong>
+              {accountStats.watchlist}
+            </strong>
+            <small>Ongoing monitoring</small>
+          </article>
+
+          <article className="stat-box safe">
             <span>Safe</span>
             <strong>
-              {accounts.filter(a => a.risk_level === "safe").length}
+              {accountStats.safe}
             </strong>
-          </div>
-
+            <small>Low-risk profile</small>
+          </article>
         </div>
 
         <div className="accounts-toolbar">
-          <input
-            className="report-search"
-            placeholder="Search by name, account ID or city..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+          <div className="accounts-search">
+            <Search size={16} />
 
-          <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-            <option value="all">All Risk Levels</option>
-            <option value="safe">Safe</option>
-            <option value="suspicious">Suspicious</option>
-            <option value="critical">Critical</option>
+            <input
+              type="text"
+              placeholder="Search wallet ID, name or city..."
+              value={search}
+              onChange={(event) =>
+                setSearch(event.target.value)
+              }
+            />
+          </div>
+
+          <select
+            value={filter}
+            onChange={(event) =>
+              setFilter(event.target.value)
+            }
+          >
+            <option value="all">
+              All Risk Levels
+            </option>
+
+            <option value="critical">
+              Critical
+            </option>
+
+            <option value="suspicious">
+              Suspicious
+            </option>
+
+            <option value="watchlist">
+              Watchlist
+            </option>
+
+            <option value="safe">
+              Safe
+            </option>
           </select>
         </div>
       </section>
 
-      <section className="account-grid">
-        {filteredAccounts.map((account) => (
-          <div className="account-card polished-card" key={account.account_id}>
-            <div className="account-card-top">
-              <div>
-                <h3>{account.name}</h3>
-                <p>{account.account_id} • {account.city}</p>
-              </div>
+      {paginatedAccounts.length > 0 ? (
+        <section className="account-grid">
+          {paginatedAccounts.map(
+            (account) => {
+              const accountId =
+                getAccountId(account);
 
-              <span
-                className="badge"
-                style={{ backgroundColor: getRiskColor(account.risk_level) }}
-              >
-                {account.risk_level.toUpperCase()}
-              </span>
-            </div>
+              const riskScore =
+                getDisplayedScore(account);
 
-            <div className="account-risk-line">
-              <span>Risk Score</span>
-              <strong style={{ color: getRiskColor(account.risk_level) }}>
-                {account.risk_score}/100
-              </strong>
-            </div>
+              const riskLevel =
+                getDisplayedLevel(account);
 
-            <div className="anatomy-bar full">
-              <div
-                className="anatomy-fill"
-                style={{
-                  width: `${account.risk_score}%`,
-                  backgroundColor: getRiskColor(account.risk_level),
-                }}
-              />
-            </div>
+              const riskColor =
+                getRiskColor(riskLevel);
 
-            <div className="account-meta">
-              <span>Age: {account.age}</span>
-              <span>City: {account.city}</span>
-            </div>
+              const metrics =
+                account.metrics || {};
+
+              return (
+                <article
+                  className={`account-card account-level-${riskLevel}`}
+                  key={accountId}
+                >
+                  <div className="account-card-top">
+                    <div className="account-identity">
+                      <span className="account-card-label">
+                        WALLET ENTITY
+                      </span>
+
+                      <h3>
+                        {account.name ||
+                          "Hackathon Wallet"}
+                      </h3>
+
+                      <p>{accountId}</p>
+                    </div>
+
+                    <span
+                      className="account-risk-badge"
+                      style={{
+                        color: riskColor,
+                        borderColor: riskColor,
+                        backgroundColor:
+                          `${riskColor}14`,
+                      }}
+                    >
+                      {riskLevel.toUpperCase()}
+                    </span>
+                  </div>
+
+                  <div className="account-risk-section">
+                    <div className="account-risk-line">
+                      <span>
+                        Hybrid Risk Score
+                      </span>
+
+                      <strong
+                        style={{
+                          color: riskColor,
+                        }}
+                      >
+                        {riskScore}
+                        <small>/100</small>
+                      </strong>
+                    </div>
+
+                    <RiskAnatomyBar
+                      breakdown={
+                        account.risk_breakdown ||
+                        {}
+                      }
+                      mlContribution={
+                        getMlContribution(
+                          account
+                        )
+                      }
+                    />
+                  </div>
+
+                  <div className="account-signal-summary">
+                    <div>
+                      <Users size={15} />
+
+                      <span>
+                        Senders
+                        <strong>
+                          {safeNumber(
+                            metrics.unique_senders
+                          )}
+                        </strong>
+                      </span>
+                    </div>
+
+                    <div>
+                      <Send size={15} />
+
+                      <span>
+                        Targets
+                        <strong>
+                          {safeNumber(
+                            metrics.unique_targets
+                          )}
+                        </strong>
+                      </span>
+                    </div>
+
+                    <div>
+                      <Zap size={15} />
+
+                      <span>
+                        Rapid
+                        <strong>
+                          {safeNumber(
+                            metrics
+                              .rapid_transfer_count
+                          )}
+                        </strong>
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="account-flow-summary">
+                    <div className="account-flow incoming">
+                      <ArrowDownToLine
+                        size={16}
+                      />
+
+                      <span>
+                        Incoming
+                        <strong>
+                          {formatCompactCurrency(
+                            metrics.total_incoming
+                          )}
+                        </strong>
+                      </span>
+                    </div>
+
+                    <div className="account-flow outgoing">
+                      <ArrowUpFromLine
+                        size={16}
+                      />
+
+                      <span>
+                        Outgoing
+                        <strong>
+                          {formatCompactCurrency(
+                            metrics.total_outgoing
+                          )}
+                        </strong>
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="account-investigate-button"
+                    onClick={() =>
+                      openInvestigation(account)
+                    }
+                  >
+                    Open Investigation
+                    <ArrowRight size={16} />
+                  </button>
+                </article>
+              );
+            }
+          )}
+        </section>
+      ) : (
+        <section className="panel accounts-empty">
+          <Search size={24} />
+
+          <strong>
+            No wallets found
+          </strong>
+
+          <p>
+            No accounts match the selected
+            search and risk filters.
+          </p>
+        </section>
+      )}
+
+      {filteredAccounts.length > 0 && (
+        <section className="accounts-pagination">
+          <div className="accounts-pagination-summary">
+            Showing{" "}
+            <strong>
+              {firstVisibleItem}–
+              {lastVisibleItem}
+            </strong>{" "}
+            of{" "}
+            <strong>
+              {filteredAccounts.length}
+            </strong>{" "}
+            wallets
+          </div>
+
+          <div className="accounts-pagination-controls">
+            <button
+              type="button"
+              className="accounts-page-button"
+              disabled={currentPage === 1}
+              onClick={() =>
+                setCurrentPage((page) =>
+                  Math.max(1, page - 1)
+                )
+              }
+            >
+              <ArrowLeft size={15} />
+              Previous
+            </button>
+
+            {visiblePageNumbers.map(
+              (pageNumber) => (
+                <button
+                  type="button"
+                  key={pageNumber}
+                  className={`accounts-page-number ${
+                    currentPage ===
+                    pageNumber
+                      ? "active"
+                      : ""
+                  }`}
+                  onClick={() =>
+                    setCurrentPage(
+                      pageNumber
+                    )
+                  }
+                >
+                  {pageNumber}
+                </button>
+              )
+            )}
 
             <button
-              onClick={async () => {
-                await loadAccount(account);
-                setActivePage("report");
-              }}
+              type="button"
+              className="accounts-page-button"
+              disabled={
+                currentPage === totalPages
+              }
+              onClick={() =>
+                setCurrentPage((page) =>
+                  Math.min(
+                    totalPages,
+                    page + 1
+                  )
+                )
+              }
             >
-              View Report
+              Next
+              <ArrowRight size={15} />
             </button>
           </div>
-        ))}
-      </section>
+        </section>
+      )}
     </main>
   );
 }

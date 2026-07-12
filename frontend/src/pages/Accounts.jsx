@@ -57,20 +57,16 @@ function getDisplayedLevel(account) {
   );
 }
 
-function getMlContribution(account) {
-  const hybridScore = safeNumber(
-    account?.hybrid_risk_score ??
-    account?.risk_score
-  );
-
-  const ruleScore = safeNumber(
+function getRuleScore(account) {
+  return safeNumber(
     account?.rule_risk_score ??
     account?.risk_score
   );
+}
 
-  return Math.max(
-    0,
-    hybridScore - ruleScore
+function getMlAnomalyScore(account) {
+  return safeNumber(
+    account?.ml_anomaly_score
   );
 }
 
@@ -436,12 +432,21 @@ function Accounts({
                         account.risk_breakdown ||
                         {}
                       }
-                      mlContribution={
-                        getMlContribution(
-                          account
-                        )
-                      }
                     />
+
+                    <div className="account-risk-components">
+                      <span>
+                        Rule
+                        <strong>{getRuleScore(account)}/100</strong>
+                      </span>
+
+                      <span>
+                        ML anomaly percentile
+                        <strong>
+                          {getMlAnomalyScore(account).toFixed(2)}/100
+                        </strong>
+                      </span>
+                    </div>
                   </div>
 
                   <div className="account-signal-summary">

@@ -6,6 +6,11 @@ from services.data_provider import (
     DEFAULT_TRANSACTIONS_FILE,
     TRANSACTIONS_FILE,
     get_transactions,
+    save_transactions,
+)
+from services.analysis_cache import (
+    clear_analysis_cache,
+    warm_analysis_cache,
 )
 
 
@@ -23,10 +28,36 @@ def reset_simulation():
             ),
         )
 
-    shutil.copyfile(
-        DEFAULT_TRANSACTIONS_FILE,
-        TRANSACTIONS_FILE,
-    )
+    previous_transactions = list(get_transactions())
+
+    try:
+        shutil.copyfile(
+            DEFAULT_TRANSACTIONS_FILE,
+            TRANSACTIONS_FILE,
+        )
+        clear_analysis_cache()
+        warm_analysis_cache()
+    except Exception as error:
+        try:
+            save_transactions(previous_transactions)
+            clear_analysis_cache()
+            warm_analysis_cache()
+        except Exception as rollback_error:
+            raise HTTPException(
+                status_code=500,
+                detail=(
+                    "Simulation reset failed and the previous cache "
+                    f"could not be restored: {rollback_error}"
+                ),
+            ) from rollback_error
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Simulation reset failed. The previous dataset and "
+                f"analysis were restored: {error}"
+            ),
+        ) from error
 
     transactions = get_transactions()
 

@@ -272,6 +272,7 @@ function Report({
   selectedUser,
   transactions = [],
   getRiskColor,
+  onNotify,
 }) {
   const [search, setSearch] =
     useState("");
@@ -458,6 +459,30 @@ function Report({
         selectedUser?.risk_breakdown ||
         {}
     );
+
+  const downloadInvestigationPDF = () => {
+    try {
+      generateInvestigationPDF(
+        selectedUser,
+        riskDetail,
+        explanation,
+        transactions
+      );
+    } catch (error) {
+      console.error(
+        "Investigation PDF could not be generated:",
+        error
+      );
+
+      onNotify?.(
+        "Investigation PDF could not be generated."
+      );
+
+      setTimeout(() => {
+        onNotify?.("");
+      }, 3000);
+    }
+  };
 
   return (
     <main className="report-page report-v3">
@@ -940,14 +965,7 @@ function Report({
             <button
               type="button"
               className="download-report-btn"
-              onClick={() =>
-                generateInvestigationPDF(
-                  selectedUser,
-                  riskDetail,
-                  explanation,
-                  transactions
-                )
-              }
+              onClick={downloadInvestigationPDF}
             >
               <Download size={16} />
               Download PDF

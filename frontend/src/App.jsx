@@ -25,12 +25,13 @@ function App() {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState("");
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue] = useState("");
 
   const [simAccount, setSimAccount] = useState("ACC001");
   const [simAmount, setSimAmount] = useState(2500);
   const [simSender, setSimSender] = useState("UNKNOWN_USER");
   const [simDevice, setSimDevice] = useState("NEW_DEVICE");
+  const [simulationAction, setSimulationAction] = useState("");
 
   const getRiskColor = (level) => {
     if (level === "critical") return "#ef4444";
@@ -92,7 +93,26 @@ function App() {
   useEffect(() => {
     const initialize = async () => {
       try {
-        await refreshData();
+        const walletList = await refreshData();
+
+        setSimAccount((currentAccount) => {
+          const currentAccountExists =
+            walletList.some(
+              (wallet) =>
+                (wallet.wallet_id || wallet.account_id) ===
+                currentAccount
+            );
+
+          if (currentAccountExists) {
+            return currentAccount;
+          }
+
+          return (
+            walletList[0]?.wallet_id ||
+            walletList[0]?.account_id ||
+            currentAccount
+          );
+        });
       } catch (error) {
         console.error(
           "Hackathon dataset could not be loaded:",
@@ -160,6 +180,8 @@ function App() {
     });
 
     setTransactions(adaptedTransactions);
+
+    return walletDetail;
   } catch (error) {
     console.error(
       "Wallet information could not be loaded:",
@@ -173,6 +195,8 @@ function App() {
     setTimeout(() => {
       setToast("");
     }, 3000);
+
+    return null;
   }
 };
 
@@ -184,6 +208,12 @@ function App() {
   };
 
   const addSimulationTransaction = async () => {
+    if (simulationAction) {
+      return;
+    }
+
+    setSimulationAction("submit");
+
     try {
       await axios.post(`${API_URL}/transactions`, {
         account_id: simAccount,
@@ -195,8 +225,31 @@ function App() {
         location: "Ankara",
       });
 
+      const walletList = await refreshData();
+      const refreshedAccount = walletList.find(
+        (wallet) =>
+          (wallet.wallet_id || wallet.account_id) ===
+          simAccount
+      );
+
+      if (!refreshedAccount) {
+        throw new Error(
+          "The refreshed wallet could not be found."
+        );
+      }
+
+      const refreshedDetail = await loadAccount(
+        refreshedAccount
+      );
+
+      if (!refreshedDetail) {
+        throw new Error(
+          "The refreshed wallet details could not be loaded."
+        );
+      }
+
       setToast(
-        "Demo transaction added successfully."
+        "Transaction added and hybrid analysis refreshed."
       );
 
       setTimeout(() => {
@@ -215,15 +268,48 @@ function App() {
       setTimeout(() => {
         setToast("");
       }, 3000);
+    } finally {
+      setSimulationAction("");
     }
   };
 
   const resetSimulation = async () => {
+    if (simulationAction) {
+      return;
+    }
+
+    setSimulationAction("reset");
+
     try {
       await axios.post(`${API_URL}/simulation/reset`);
 
+      const walletId =
+        selectedUser?.wallet_id ||
+        selectedUser?.account_id ||
+        simAccount;
+      const walletList = await refreshData();
+      const refreshedAccount = walletList.find(
+        (wallet) =>
+          (wallet.wallet_id || wallet.account_id) ===
+          walletId
+      );
+
+      if (refreshedAccount) {
+        const refreshedDetail = await loadAccount(
+          refreshedAccount
+        );
+
+        if (!refreshedDetail) {
+          throw new Error(
+            "The reset wallet details could not be loaded."
+          );
+        }
+      } else {
+        clearSelectedAccount();
+      }
+
       setToast(
-        "Demo dataset reset successfully."
+        "Demo dataset reset and hybrid analysis refreshed."
       );
 
       setTimeout(() => {
@@ -242,6 +328,8 @@ function App() {
       setTimeout(() => {
         setToast("");
       }, 3000);
+    } finally {
+      setSimulationAction("");
     }
   };
 
@@ -310,6 +398,7 @@ function App() {
             selectedUser={selectedUser}
             transactions={transactions}
             getRiskColor={getRiskColor}
+            onNotify={setToast}
           />
         )}
 
@@ -337,6 +426,7 @@ function App() {
               addSimulationTransaction
             }
             resetSimulation={resetSimulation}
+            simulationAction={simulationAction}
           />
         )}
 

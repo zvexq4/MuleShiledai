@@ -1,10 +1,14 @@
 from functools import lru_cache
 
+from services.data_provider import get_transactions
 from services.excel_data_provider import normalize_transactions
 from services.ml_anomaly_detector import (
     enrich_wallets_with_hybrid_score,
 )
-from services.risk_engine import analyze_all_wallets
+from services.risk_engine import (
+    analyze_all_wallets,
+    normalize_demo_transaction,
+)
 
 
 DEFAULT_CONTAMINATION = 0.02
@@ -13,10 +17,56 @@ DEFAULT_CONTAMINATION = 0.02
 @lru_cache(maxsize=1)
 def get_cached_transactions() -> list[dict]:
     """
-    Excel dosyasını yalnızca ilk çağrıda okur.
-    Sonraki çağrılarda RAM'deki işlem listesini döndürür.
+    Excel işlemlerini, yalnızca mevcut Excel cüzdanlarını hedefleyen
+    açıkça işaretlenmiş simulator işlemleriyle birleştirir.
     """
-    return normalize_transactions()
+    excel_transactions = normalize_transactions()
+
+    excel_wallet_ids = {
+        value
+        for transaction in excel_transactions
+        for value, value_type in (
+            (
+                transaction.get("source"),
+                transaction.get("source_type"),
+            ),
+            (
+                transaction.get("target"),
+                transaction.get("target_type"),
+            ),
+        )
+        if value and value_type == "wallet"
+    }
+
+    simulator_transactions = []
+    seen_transaction_ids = {
+        transaction.get("transaction_id")
+        for transaction in excel_transactions
+        if transaction.get("transaction_id")
+    }
+
+    for transaction in get_transactions():
+        transaction_id = transaction.get("transaction_id")
+        account_id = transaction.get("account_id")
+
+        if transaction.get("simulation") is not True:
+            continue
+
+        if account_id not in excel_wallet_ids:
+            continue
+
+        if not transaction_id or transaction_id in seen_transaction_ids:
+            continue
+
+        simulator_transactions.append(
+            normalize_demo_transaction(transaction)
+        )
+        seen_transaction_ids.add(transaction_id)
+
+    return [
+        *excel_transactions,
+        *simulator_transactions,
+    ]
 
 
 @lru_cache(maxsize=1)

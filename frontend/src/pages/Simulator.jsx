@@ -42,6 +42,19 @@ function getRiskScore(account) {
   );
 }
 
+function getRuleRiskScore(account) {
+  return safeNumber(
+    account?.rule_risk_score ??
+      account?.risk_score
+  );
+}
+
+function getMlAnomalyScore(account) {
+  return safeNumber(
+    account?.ml_anomaly_score
+  );
+}
+
 function Simulator({
   accounts = [],
   simAccount,
@@ -54,6 +67,7 @@ function Simulator({
   setSimDevice,
   addSimulationTransaction,
   resetSimulation,
+  simulationAction = "",
 }) {
   const selectedAccount =
     accounts.find(
@@ -70,28 +84,11 @@ function Simulator({
   const selectedRiskLevel =
     getRiskLevel(selectedAccount);
 
-  const amountValue =
-    safeNumber(simAmount);
+  const selectedRuleRiskScore =
+    getRuleRiskScore(selectedAccount);
 
-  const isUnknownSender =
-    Boolean(simSender) &&
-    !String(simSender)
-      .toUpperCase()
-      .includes("KNOWN");
-
-  const isNewDevice =
-    simDevice === "NEW_DEVICE";
-
-  const estimatedImpact =
-    (isUnknownSender ? 30 : 0) +
-    (isNewDevice ? 20 : 0) +
-    (amountValue >= 10000 ? 10 : 0);
-
-  const projectedScore = Math.min(
-    100,
-    selectedRiskScore +
-      estimatedImpact
-  );
+  const selectedMlAnomalyScore =
+    getMlAnomalyScore(selectedAccount);
 
   return (
     <main className="simulator-page simulator-v2">
@@ -108,8 +105,8 @@ function Simulator({
 
             <p>
               Create a controlled transaction and
-              observe how MuleShield recalculates
-              account risk.
+              rebuild the cached hybrid analysis for
+              the selected wallet.
             </p>
           </div>
         </div>
@@ -246,21 +243,21 @@ function Simulator({
           <div className="simulator-impact-head">
             <div>
               <span>
-                PROJECTED IMPACT
+                BACKEND ANALYSIS
               </span>
 
               <strong>
-                +{estimatedImpact} points
+                {selectedRiskScore}/100
               </strong>
             </div>
 
             <div>
               <span>
-                Estimated Score
+                Rule Score
               </span>
 
               <strong>
-                {projectedScore}/100
+                {selectedRuleRiskScore}/100
               </strong>
             </div>
           </div>
@@ -269,40 +266,28 @@ function Simulator({
             <i
               style={{
                 width:
-                  `${projectedScore}%`,
+                  `${selectedRiskScore}%`,
               }}
             />
           </div>
 
           <div className="simulator-impact-flags">
             <span
-              className={
-                isUnknownSender
-                  ? "active"
-                  : ""
-              }
+              className="active"
             >
-              Unknown Sender
+              Rule: {selectedRuleRiskScore}/100
             </span>
 
             <span
-              className={
-                isNewDevice
-                  ? "active"
-                  : ""
-              }
+              className="active"
             >
-              New Device
+              ML anomaly: {selectedMlAnomalyScore}/100
             </span>
 
             <span
-              className={
-                amountValue >= 10000
-                  ? "active"
-                  : ""
-              }
+              className="active"
             >
-              High Amount
+              Hybrid: {selectedRiskLevel.toUpperCase()}
             </span>
           </div>
         </div>
@@ -311,22 +296,28 @@ function Simulator({
           <button
             type="button"
             className="simulator-submit"
+            disabled={Boolean(simulationAction)}
             onClick={
               addSimulationTransaction
             }
           >
             <Zap size={16} />
-            Add Demo Transaction
+            {simulationAction === "submit"
+              ? "Rebuilding Analysis..."
+              : "Add Demo Transaction"}
             <ArrowRight size={16} />
           </button>
 
           <button
             type="button"
             className="reset-button"
+            disabled={Boolean(simulationAction)}
             onClick={resetSimulation}
           >
             <RotateCcw size={16} />
-            Reset Demo Dataset
+            {simulationAction === "reset"
+              ? "Resetting Analysis..."
+              : "Reset Demo Dataset"}
           </button>
         </div>
 
@@ -399,8 +390,8 @@ function Simulator({
               </strong>
 
               <p>
-                Submit the transaction and allow
-                MuleShield to recalculate risk.
+                Submit the transaction and rebuild
+                the cached rule, ML and hybrid analysis.
               </p>
             </div>
 
@@ -416,8 +407,8 @@ function Simulator({
               </strong>
 
               <p>
-                Inspect the generated report or
-                restore the demo dataset.
+                Open Reports to inspect the refreshed
+                wallet analysis, or reset the dataset.
               </p>
             </div>
 
@@ -447,11 +438,12 @@ function Simulator({
                 </strong>
 
                 <span>
-                  Independent funding sources
+                  5–9: +5, 10–24: +10,
+                  25–49: +20, 50+: +25
                 </span>
               </div>
 
-              <b>+30</b>
+              <b>+5–25</b>
             </article>
 
             <article>
@@ -465,12 +457,12 @@ function Simulator({
                 </strong>
 
                 <span>
-                  Funds moved shortly after
-                  arrival
+                  60-minute amount-matched
+                  transfers: +10 to +30
                 </span>
               </div>
 
-              <b>+40</b>
+              <b>+10–30</b>
             </article>
 
             <article>

@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 
@@ -21,7 +21,14 @@ def parse_timestamp(value: str | None) -> datetime | None:
         return None
 
     try:
-        return datetime.fromisoformat(value)
+        parsed_timestamp = datetime.fromisoformat(value)
+
+        if parsed_timestamp.tzinfo is not None:
+            return parsed_timestamp.astimezone(
+                timezone.utc
+            ).replace(tzinfo=None)
+
+        return parsed_timestamp
     except (ValueError, TypeError):
         return None
 

@@ -41,7 +41,6 @@ function safeNumber(value) {
 
 function RiskAnatomyBar({
   breakdown = {},
-  mlContribution = 0,
   showLegend = false,
 }) {
   const segments = SIGNALS.map((signal) => ({
@@ -56,17 +55,9 @@ function RiskAnatomyBar({
     0
   );
 
-  const safeMlContribution =
-    safeNumber(mlContribution);
-
-  const usedSpace = Math.min(
-    100,
-    ruleTotal + safeMlContribution
-  );
-
   const safeSpace = Math.max(
     0,
-    100 - usedSpace
+    100 - Math.min(100, ruleTotal)
   );
 
   return (
@@ -82,16 +73,6 @@ function RiskAnatomyBar({
             title={`${signal.label}: ${signal.value} risk points`}
           />
         ))}
-
-        {safeMlContribution > 0 && (
-          <div
-            className="anatomy-seg seg-ml"
-            style={{
-              width: `${safeMlContribution}%`,
-            }}
-            title={`ML anomaly contribution: ${safeMlContribution} points`}
-          />
-        )}
 
         <div
           className="anatomy-seg seg-safe"
@@ -112,10 +93,6 @@ function RiskAnatomyBar({
             </span>
           ))}
 
-          <span>
-            <i className="dot seg-ml" />
-            ML contribution
-          </span>
         </div>
       )}
     </div>

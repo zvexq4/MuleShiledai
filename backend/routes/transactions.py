@@ -8,6 +8,10 @@ from services.data_provider import (
     get_transactions,
     save_transactions,
 )
+from services.analysis_cache import (
+    clear_analysis_cache,
+    warm_analysis_cache,
+)
 
 
 router = APIRouter()
@@ -46,6 +50,32 @@ def get_account_transactions(account_id: str):
 def create_transaction(payload: TransactionCreate):
     transactions = get_transactions()
 
+    duplicate = next(
+        (
+            transaction
+            for transaction in transactions
+            if transaction.get("simulation") is True
+            and transaction.get("account_id") == payload.account_id
+            and float(transaction.get("amount", 0)) == payload.amount
+            and transaction.get("type") == payload.type
+            and transaction.get("sender_id") == payload.sender_id
+            and transaction.get("receiver_id") == payload.receiver_id
+            and transaction.get("device_id") == payload.device_id
+        ),
+        None,
+    )
+
+    if duplicate:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "The same simulator transaction already exists: "
+                f"{duplicate.get('transaction_id')}"
+            ),
+        )
+
+    previous_transactions = list(transactions)
+
     new_transaction = {
         "transaction_id": f"TX-{uuid4().hex[:10].upper()}",
         "account_id": payload.account_id,
@@ -56,10 +86,36 @@ def create_transaction(payload: TransactionCreate):
         "device_id": payload.device_id,
         "location": payload.location,
         "timestamp": datetime.now(timezone.utc).isoformat(),
+        "simulation": True,
     }
 
     transactions.append(new_transaction)
-    save_transactions(transactions)
+
+    try:
+        save_transactions(transactions)
+        clear_analysis_cache()
+        warm_analysis_cache()
+    except Exception as error:
+        try:
+            save_transactions(previous_transactions)
+            clear_analysis_cache()
+            warm_analysis_cache()
+        except Exception as rollback_error:
+            raise HTTPException(
+                status_code=500,
+                detail=(
+                    "Analysis rebuild failed and the previous cache "
+                    f"could not be restored: {rollback_error}"
+                ),
+            ) from rollback_error
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Analysis rebuild failed. The simulator transaction "
+                f"was rolled back: {error}"
+            ),
+        ) from error
 
     return {
         "message": "Transaction created successfully",

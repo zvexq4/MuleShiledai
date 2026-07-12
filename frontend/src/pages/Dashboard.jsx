@@ -513,13 +513,13 @@ const weeklyLoad = useMemo(
         <div className="metric-status">
           <span className="status-dot" />
 
-          ANALYSIS ENGINE STATUS:{" "}
+          ANALYSIS CACHE STATUS:{" "}
           <strong className="metric-online">
-            ONLINE
+            READY
           </strong>
 
           <span className="metric-sub">
-            Hackathon dataset connected
+            Hackathon dataset loaded
           </span>
         </div>
       </section>
@@ -587,17 +587,17 @@ const weeklyLoad = useMemo(
                       )
                     }
                   >
-                    RISK SCORE
+                    HYBRID RISK SCORE
                     <ArrowUpDown size={12} />
                   </th>
 
                   <th className="col-anatomy">
   <div className="anatomy-column-header">
     <div className="anatomy-header-title">
-      RISK ANATOMY (XAI)
+      RULE RISK ANATOMY
 
       <span className="anatomy-signal-count">
-        7 SIGNALS
+        6 RULE SIGNALS
       </span>
     </div>
 
@@ -632,10 +632,6 @@ const weeklyLoad = useMemo(
         Device
       </span>
 
-      <span title="Isolation Forest anomaly contribution">
-        <i className="legend-color legend-ml" />
-        ML
-      </span>
     </div>
   </div>
 </th>
@@ -716,27 +712,21 @@ const weeklyLoad = useMemo(
 
                         <td className="col-anatomy">
                           <RiskAnatomyBar
-  breakdown={
-    account.risk_breakdown
-    || {}
-  }
-  mlContribution={
-    Math.max(
-      0,
-      Number(
-        account.hybrid_risk_score
-        ?? account.risk_score
-        ?? 0
-      )
-      -
-      Number(
-        account.rule_risk_score
-        ?? account.risk_score
-        ?? 0
-      )
-    )
-  }
-/>
+                            breakdown={
+                              account.risk_breakdown ||
+                              {}
+                            }
+                          />
+
+                          <div className="anatomy-score-meta">
+                            <span>
+                              Rule {account.rule_risk_score ?? account.risk_score ?? 0}/100
+                            </span>
+
+                            <span>
+                              ML anomaly percentile {Number(account.ml_anomaly_score ?? 0).toFixed(2)}/100
+                            </span>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -851,7 +841,7 @@ const weeklyLoad = useMemo(
     </div>
 
     <span className="inspector-live-data">
-      LIVE DATA
+      SELECTED WALLET DATA
     </span>
   </div>
 

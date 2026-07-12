@@ -214,6 +214,16 @@
     width: 100%;
 }
 
+.anatomy-score-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 8px;
+    white-space: nowrap;
+}
+
 .anatomy-track {
     width: 100%;
     min-width: 180px;

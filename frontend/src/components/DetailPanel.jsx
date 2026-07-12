@@ -73,12 +73,6 @@ function DetailPanel({
         safeNumber(firstValue)
     );
 
-  const mlContribution = Math.max(
-    0,
-    safeNumber(riskScore) -
-      safeNumber(ruleScore)
-  );
-
   return (
     <section className="panel detail-panel">
       <div className="detail-panel-heading">
@@ -122,7 +116,7 @@ function DetailPanel({
             </span>
 
             <span>
-              ML
+              ML anomaly percentile
               <strong>
                 {mlScore !== undefined &&
                 mlScore !== null
@@ -140,9 +134,15 @@ function DetailPanel({
           </div>
         </div>
 
+        <div className="rule-anatomy-caption">
+          <span>RULE RISK ANATOMY</span>
+          <small>
+            Backend risk breakdown · Rule score {ruleScore}/100
+          </small>
+        </div>
+
         <RiskAnatomyBar
           breakdown={breakdown}
-          mlContribution={mlContribution}
           showLegend
         />
       </div>

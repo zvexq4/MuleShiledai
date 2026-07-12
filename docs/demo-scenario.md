@@ -39,7 +39,7 @@ Confirm:
 ### Keep the distinction clear
 
 - Dashboard, Accounts, Alerts, Reports, and Analytics use Excel-backed hybrid results.
-- Simulator writes only to the separate demo JSON dataset.
+- Simulator writes to the demo JSON dataset and refreshes the Excel-backed hybrid analysis cache so the refreshed dashboard and wallet details can reflect current simulated activity.
 - The anomaly percentile is not a fraud probability.
 
 ## Presentation Flow
@@ -177,7 +177,7 @@ No. The current prototype loads a local Excel dataset and warms an in-process ca
 
 ### Does the simulator affect the main dashboard?
 
-No. Simulator endpoints use JSON demo data, while the primary dashboard uses the Excel hackathon dataset.
+Simulator actions write to the demo JSON dataset and rebuild the Excel-backed analysis cache. This means the same dashboard and wallet detail endpoints can reflect simulated overlay transactions after the rebuild.
 
 ### Does it integrate with a bank?
 

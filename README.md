@@ -36,7 +36,7 @@ MuleShield AI analyzes the hackathon transaction dataset at wallet level and pro
 - A signal-by-signal Risk Anatomy breakdown
 - Searchable monitoring, account, alert, analytics, and investigation views
 - Wallet transaction timelines and client-side PDF reports
-- A separate JSON-based transaction simulator
+- A JSON-backed transaction simulator that writes demo overlay transactions and refreshes hybrid analysis
 
 The system keeps each rule contribution in `risk_breakdown`, making its deterministic assessment traceable instead of presenting only a final score.
 
@@ -60,7 +60,7 @@ The system keeps each rule contribution in `risk_breakdown`, making its determin
 8. The React frontend retrieves the hybrid dashboard and wallet details from the `/dataset` API.
 9. Analysts can filter wallets, inspect Risk Anatomy, review timelines, and export an investigation PDF.
 
-> The simulator uses the separate JSON files under `datasets/demo`. It does not modify the Excel hackathon dataset.
+> The simulator writes to the separate JSON files under `datasets/demo`. New simulated transactions are merged into the Excel-backed hybrid analysis cache during rebuild, but the original Excel source file is not modified.
 
 ## <img src="docs/assets/section-mark.svg" width="26" alt=""> System Architecture
 
@@ -356,8 +356,8 @@ npm run build
 | GET | `/risk/{account_id}` | Rule risk details for a demo account |
 | GET | `/explain/{account_id}` | Text explanation for a demo account |
 | GET | `/transactions/{account_id}` | Demo transactions involving an account |
-| POST | `/transactions` | Adds a transaction to the demo JSON dataset |
-| POST | `/simulation/reset` | Restores the default demo transactions |
+| POST | `/transactions` | Adds a transaction to the demo JSON dataset and refreshes the backend hybrid analysis cache |
+| POST | `/simulation/reset` | Restores the default demo transactions and refreshes the backend hybrid analysis cache |
 
 ## <img src="docs/assets/section-mark.svg" width="26" alt=""> Demo Flow
 
@@ -381,7 +381,7 @@ flowchart LR
 6. Open Reports and inspect the transaction timeline.
 7. Export the selected investigation as a PDF.
 8. Use Analytics to review anomaly counts, signal prevalence, and money flow.
-9. Use Simulator to add or reset a transaction in the separate demo JSON dataset.
+9. Use Simulator to add or reset a transaction in the demo JSON dataset and refresh the hybrid analysis cache.
 
 ## <img src="docs/assets/section-mark.svg" width="26" alt=""> Repository Structure
 
@@ -428,8 +428,8 @@ muleshield-ai/
 - Isolation Forest is fitted on the loaded wallet population without labeled fraud outcomes.
 - Anomaly percentiles are relative scores and must not be read as fraud probabilities.
 - Rule thresholds are prototype settings that require domain and labeled-data validation.
-- Simulator changes do not update the Excel-backed hybrid dashboard.
-- PDF generation is client-side and reports are not stored or audited by the backend.
+- Simulator changes write demo JSON transactions and rebuild the Excel-backed analysis cache, so dashboard and wallet results can reflect simulated overlay activity without changing the source Excel file.
+- PDF generation is client-side and reports are not stored or audited by the backend. The current jsPDF setup uses built-in fonts and may not render Turkish-specific characters such as İ ı Ş ş Ğ ğ correctly.
 - The repository currently has no automated frontend or backend test suite.
 
 ## <img src="docs/assets/section-mark.svg" width="26" alt=""> Future Development

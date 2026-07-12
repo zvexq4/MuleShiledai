@@ -9,7 +9,7 @@ MuleShield AI is a local two-tier application:
 - A React frontend provides analyst-facing monitoring and investigation views.
 - A FastAPI backend loads local datasets, normalizes transactions, calculates wallet risk, caches results, and exposes JSON endpoints.
 
-The main dashboard uses the supplied Excel hackathon dataset. The simulator uses a separate JSON demo dataset.
+The main dashboard is driven by the supplied Excel hackathon dataset. Simulator transactions are persisted to a separate JSON demo dataset and can be merged into the backend analysis cache during rebuild.
 
 ```mermaid
 flowchart TB
@@ -76,7 +76,7 @@ The legacy/demo routes use:
 - `datasets/demo/sample_transactions.json`
 - `datasets/demo/default_transactions.json`
 
-`POST /transactions` writes to `sample_transactions.json`. `POST /simulation/reset` copies the default transaction file over it.
+`POST /transactions` writes to `sample_transactions.json` and triggers a cache rebuild using the Excel dataset plus eligible simulator overlay transactions. `POST /simulation/reset` copies the default transaction file over it and refreshes the analysis cache.
 
 ## Backend Processing Pipeline
 
@@ -167,7 +167,7 @@ The frontend includes Dashboard, Accounts, Alerts, Reports, Analytics, Simulator
 
 ## PDF Generation
 
-`frontend/src/utils/generateInvestigationPDF.js` generates reports in the browser with jsPDF and jspdf-autotable. The PDF is not generated, stored, or audited by the backend.
+`frontend/src/utils/generateInvestigationPDF.js` generates reports in the browser with jsPDF and jspdf-autotable. The PDF is not generated, stored, or audited by the backend. The current implementation uses jsPDF's built-in fonts, which may not support Turkish-specific characters such as İ ı Ş ş Ğ ğ.
 
 ## API Boundary
 
@@ -184,7 +184,7 @@ The frontend currently calls `http://127.0.0.1:8000`. FastAPI permits all CORS o
 ## Trust Boundaries and Limitations
 
 - All data is local and trusted by the prototype; there is no authentication boundary.
-- JSON simulator writes are not synchronized with the Excel analysis cache.
+- JSON simulator writes are merged into the Excel-backed analysis cache when the simulator rebuilds, so dashboard and wallet results can reflect simulated overlay transactions.
 - Cached analysis is not shared between backend processes.
 - The ML model is fitted to the loaded population without labeled outcomes.
 - No automated enforcement follows a risk result.
